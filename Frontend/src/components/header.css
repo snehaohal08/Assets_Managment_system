@@ -1,0 +1,86 @@
+/* ================= HEADER ================= */
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  height: 70px;
+  padding: 10px 15px;
+  gap: 15px;
+
+  background: #ffffff;          /* 🔥 white card */
+  border-radius: 20px;          /* 🔥 rounded */
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);  /* 🔥 soft shadow */
+}
+
+/* ================= SEARCH ================= */
+.search-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+
+  background: #f1eef9; 
+  border-radius: 50px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  padding: 10px 15px;
+}
+
+.search-icon {
+  color: #999;
+  font-size: 14px;
+}
+
+.main-input {
+  border: none;
+  outline: none;
+  background: transparent;
+
+  margin-left: 10px;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* ================= REMINDER ================= */
+.reminder-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: #ffffff;
+  border-radius: 14px;
+
+  padding: 10px 14px;
+  max-width: 360px;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+/* bell */
+.bell-box {
+  background: #ffecec;
+  padding: 10px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bell-icon {
+  color: #6a0dad;
+  font-size: 16px;
+}
+
+/* text */
+.reminder-content h4 {
+  font-size: 12px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.reminder-content p {
+  font-size: 10px;
+  color: #777;
+  margin: 2px 0 0;
+  line-height: 1.4;
+}

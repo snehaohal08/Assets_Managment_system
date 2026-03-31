@@ -1,0 +1,118 @@
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: #f7f7f7;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);  
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* ================= LOGO ================= */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 0;  /* more space at top/bottom */
+  border-bottom: 1px solid #eee;
+}
+
+.logo-circle {
+  width: 140px;   /* larger for better visibility */
+  height: 140px;
+  /* border-radius: 50%; */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); */
+}
+
+.logo-circle img {
+  width: 80%;      /* fit nicely inside the circle */
+  height: 80%;
+  object-fit: contain;
+}
+
+/* ================= SECTION ================= */
+.section-title {
+  font-size: 12px;
+  color: #aaa;
+  margin: 15px 20px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ================= MENU ================= */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  margin: 3px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  background: #646cff;
+  color: #fff;
+}
+
+.menu-item:hover svg {
+  color: #fff;
+}
+
+.menu-item.active {
+  background: #646cff;
+  color: #fff;
+}
+
+.menu-item.active svg {
+  color: #fff;
+}
+
+.menu-item svg {
+  font-size: 16px;
+  color: #888;
+}
+
+/* ================= PROFILE ================= */
+.sidebar-profile {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #5a60d3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+}
+
+.profile-text span {
+  font-size: 12px;
+  color: #888;
+}
+
+.profile-text strong {
+  font-size: 14px;
+  display: block;
+  color: #333;
+}

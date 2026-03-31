@@ -1,0 +1,275 @@
+/* ================= GLOBAL ================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #f3f4f6;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* ================= MAIN CONTAINER ================= */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  padding: 15px;
+  gap: 15px;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  height: 100%;
+}
+
+/* ================= MAIN CONTENT ================= */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+  overflow: hidden;
+}
+
+/* ================= HEADER ================= */
+.header-wrapper {
+  height: 65px;
+  flex-shrink: 0;
+}
+
+/* ================= BODY ================= */
+.dashboard-body {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+  overflow: hidden;
+}
+
+/* ================= STATS ================= */
+.stats-column {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+
+  height: 110px;   /* 🔥 pehle 90 tha → ab bada */
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #646cff;
+  align-self: flex-end;
+}
+
+/* ================= RIGHT SECTION ================= */
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ================= CHART ================= */
+.chart-wrapper {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 15px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* chart container fix */
+.chart-box {
+  flex: 1;
+  height: 100%;
+}
+
+/* ================= BOTTOM GRID ================= */
+.bottom-grid {
+  height: 35%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 15px;
+}
+
+/* ================= CARDS ================= */
+.pie-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 15px;
+
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;   /* 🔥 ADD THIS */
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+/* ================= DONUT ================= */
+.donut-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;   /* 🔥 MUST */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  text-align: center;
+}
+
+.donut-center h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #646cff;
+}
+
+.donut-center p {
+  font-size: 12px;
+  color: #777;
+}
+
+/* ================= TABLE ================= */
+/* TABLE */
+.repair-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* HEADER */
+.repair-table th {
+  text-align: left;
+  padding: 8px 0;
+  font-weight: 500;
+  color: #999;
+  border-bottom: 1px solid #eee;
+}
+
+/* BODY */
+.repair-table td {
+  padding: 12px 0;
+  border-bottom: 1px solid #f2f2f2;
+  color: #444;
+}
+
+/* HOVER */
+.repair-table tr:hover {
+  background: #faf7ff;
+}
+
+/* STATUS BADGE */
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* COLORS */
+.progress {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+.pending {
+  background: #ffe5e5;
+  color: #f44336;
+}
+
+.done {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+/* BODY */
+.repair-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+}
+
+/* HOVER EFFECT */
+.repair-table tr:hover {
+  background: #faf7ff;
+}
+
+/* STATUS BASE */
+.status {
+  font-weight: 600;
+}
+
+/* COLORS */
+.progress {
+  color: #ff9800;
+}
+
+.pending {
+  color: #f44336;
+}
+
+.done {
+  color: #4caf50;
+}
+/* ================= STATUS COLORS ================= */
+.progress {
+  color: orange;
+  font-weight: 600;
+}
+
+.done {
+  color: green;
+  font-weight: 600;
+}
+
+.pending {
+  color: red;
+  font-weight: 600;
+}
+
+/* ================= PLACEHOLDER ================= */
+.placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 13px;
+}

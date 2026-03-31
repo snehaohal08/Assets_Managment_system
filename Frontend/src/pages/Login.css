@@ -1,0 +1,306 @@
+* {
+  box-sizing: border-box;
+}
+
+/* ===== Container ===== */
+/* .login-wrapper {
+  min-height: 100vh;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+} */
+/* .login-container {
+  display: flex;
+  width: 100%;
+  max-width: 1150px;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+} */
+.login-container {
+  display: flex;
+  max-width: 1000px;
+  margin: 60px auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+}
+
+/* ===== BRAND ===== */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px; /* reduced gap */
+}
+
+.brand img {
+  width: 36px;
+}
+
+.brand h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.brand h2 span {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ===== Left Side ===== */
+.login-left {
+  flex: 1;
+  padding: 30px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  /* background: linear-gradient(135deg, #6a0dad, #9b59b6); */
+}
+
+/* Glow */
+.login-left::before {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(255,255,255,0.25), transparent);
+  top: -80px;
+  left: -80px;
+  filter: blur(70px);
+}
+
+.login-left::after {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
+  bottom: -80px;
+  right: -80px;
+  filter: blur(90px);
+}
+
+.login-left * {
+  position: relative;
+  z-index: 2;
+}
+
+.login-left h1 {
+  font-size: 29px;
+  margin-bottom: 29px;
+}
+
+/* ===== Features ===== */
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 20px; /* reduced gap */
+}
+
+.icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon img {
+  width: 18px;
+}
+
+/* ===== Right Side ===== */
+.login-right {
+  flex: 1;
+  background: white;
+  padding: 30px 40px 20px; /* 🔥 bottom gap reduced */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 🔥 center se top shift */
+}
+
+/* Heading */
+.login-right h2 {
+  font-size: 26px;
+  margin-bottom: 45px; /* reduced */
+  text-align: center;
+}
+
+/* ===== Form ===== */
+.login-right form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inputs */
+.login-right input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.login-right input:focus {
+  border-color: #8e2de2;
+  outline: none;
+}
+
+/* ===== Password ===== */
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 40px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* ===== Options ===== */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 18px; /* balanced */
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #555;
+}
+
+/* Checkbox */
+.options input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.options input[type="checkbox"]:checked {
+  background: #646cff;
+}
+
+.options input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Link */
+.options a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.options a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Button ===== */
+.login-right button {
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background: #646cff;
+  color: white;
+  cursor: pointer;
+}
+
+.login-right button:hover {
+  opacity: 0.9;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left {
+    text-align: center;
+  }
+}
+/* ================= ALERT BOX RIGHT-TOP ================= */
+.custom-alert-box {
+  position: fixed;
+  top: 20px;       /* top distance from window */
+  right: 20px;     /* right distance from window */
+  transform: none; /* remove center translate */
+  background: white;
+  width: 280px;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  text-align: left;  /* better for corner alerts */
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  animation: slideInRight 0.4s ease-out;
+}
+
+.alert-icon-circle {
+  width: 40px;
+  height: 40px;
+  /* background-color: #9aff9a; */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-icon {
+  width: 50px;
+  height: 50px;
+}
+
+/* Error style */
+.custom-alert-box.error .alert-title {
+  color: #FF4C4C;
+  
+}
+.custom-alert-box.error .alert-icon-circle {
+  background-color: #ffcccc;
+}
+
+/* Slide-in animation from right */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.left-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
