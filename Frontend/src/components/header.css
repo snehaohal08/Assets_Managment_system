@@ -13,19 +13,35 @@
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);  /* 🔥 soft shadow */
 }
 
+/* ================= HAMBURGER ================= */
+.hamburger {
+  display: none; /* hidden on desktop */
+  background: #646cff;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 5px;
+}
+
 /* ================= SEARCH ================= */
 .search-container {
   flex: 1;
   display: flex;
   align-items: center;
-
   background: #f1eef9; 
   border-radius: 50px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
   padding: 10px 15px;
+  position: relative;   /* ✅ ADD THIS */
 }
 
 .search-icon {
+  position: absolute;
+  left: 15px;     /* 👈 left me fix */
+  top: 50%;
+  transform: translateY(-50%);  /* 👈 center vertically */
   color: #999;
   font-size: 14px;
 }
@@ -34,7 +50,7 @@
   border: none;
   outline: none;
   background: transparent;
-
+  padding-left: 20px;
   margin-left: 10px;
   width: 100%;
   font-size: 14px;
@@ -83,4 +99,19 @@
   color: #777;
   margin: 2px 0 0;
   line-height: 1.4;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .search-container {
+    display: none; /* hide search on mobile */
+  }
+
+  .reminder-card {
+    display: none; /* hide reminder on mobile */
+  }
 }

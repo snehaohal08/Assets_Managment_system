@@ -8,9 +8,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Login Page */}
         <Route path="/" element={<Login />} />
 
-        <Route 
+        {/* Admin */}
+        <Route
           path="/admin-dashboard"
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
@@ -19,6 +21,7 @@ function App() {
           }
         />
 
+        {/* Employee */}
         <Route
           path="/employee-dashboard"
           element={

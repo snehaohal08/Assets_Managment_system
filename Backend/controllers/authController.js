@@ -1,24 +1,42 @@
-// controllers/authController.js
+const db = require("../config/db");
+const jwt = require("jsonwebtoken");
+
+const SECRET_KEY = "mysecretkey"; // 🔐 important
+
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  // Dummy user data
-  const users = [
-    { email: "admin@gmail.com", password: "Admin@1234", role: "admin" },
-    { email: "employee@gmail.com", password: "Emp@123", role: "employee" },
-  ];
+  const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
 
-  const user = users.find(u => u.email === email && u.password === password);
+  db.query(sql, [email, password], (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: "Server error" });
+    }
 
-  if (!user) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
+    if (result.length > 0) {
+      const user = result[0];
 
-  // Success response
-  res.json({
-    message: "Login successful",
-    token: "dummy-token", // later replace with JWT
-    role: user.role
+      // ✅ REAL TOKEN CREATE
+      const token = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        SECRET_KEY,
+        { expiresIn: "1h" }
+      );
+
+      return res.json({
+        message: "Login successful",
+        role: user.role,
+        token: token, // 🔥 real token
+      });
+    } else {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
   });
 };
 

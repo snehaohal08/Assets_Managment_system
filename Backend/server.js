@@ -1,24 +1,20 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Test route (check server working)
-app.get("/", (req, res) => {
-  res.send("API is running 🚀");
-});
+// 🔥 VERY IMPORTANT (images serve)
+app.use("/images", express.static(path.join(__dirname, "images")));
 
-// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/assets", require("./routes/assets"));
+app.use("/api/allocations", require("./routes/asstesAllocation"));
 
-// Server start
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🔥`);
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+  console.log("Test auth route: http://localhost:5000/api/auth");
 });

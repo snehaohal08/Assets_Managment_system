@@ -1,61 +1,64 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import AssetsAllocationForm from "./AssetsForm";
 import "./AssetsData.css";
+
 export default function AssetsData() {
   const [assets, setAssets] = useState([]);
+  const [activeTab, setActiveTab] = useState("Assets"); // ✅ Local tab state
 
-useEffect(() => {
-  const dummyData = [
-    {
-      id: 1,
-      name: "Laptop",
-      description: "Dell Latitude",
-      status: "Available",
-      assignedTo: "Rahul",
-      image: "/images/laptop.png"
-    },
-    {
-      id: 2,
-      name: "Mouse",
-      description: "Logitech Mouse",
-      status: "Assigned",
-      assignedTo: "Sneha",
-      image: "/images/mouse.png"
-    },
-    {
-      id: 3,
-      name: "Keyboard",
-      description: "Mechanical Keyboard",
-      status: "Available",
-      assignedTo: "Mosin",
-      image: "/images/keyboard.png"
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/assets")
+      .then((res) => setAssets(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  // 🔥 GROUP + COUNT LOGIC
+  const groupedAssets = {};
+  assets.forEach((asset) => {
+    if (!groupedAssets[asset.name]) {
+      groupedAssets[asset.name] = { ...asset, count: 1 };
+    } else {
+      groupedAssets[asset.name].count += 1;
     }
-  ];
-
-  setAssets(dummyData);
-}, []);
+  });
+  const uniqueAssets = Object.values(groupedAssets);
 
   return (
     <div className="assets-page">
-      <h2 className="page-title">Assets</h2>
-      <div className="assets-grid">
-        {assets.map(asset => (
-          <div key={asset.id} className="asset-card">
-            <div className="asset-image">
-              <img src={asset.image || "/default.png"} alt={asset.name} />
-            </div>
-            <h3>{asset.name}</h3>
-            <p>{asset.description}</p>
-            <p><strong>Status:</strong> {asset.status}</p>
-            <p><strong>Assigned To:</strong> {asset.assignedTo || "-"}</p>
-            <div className="asset-actions">
-              <button>Edit</button>
-              <button>Delete</button>
-              <button>Details</button>
-            </div>
-          </div>
-        ))}
+      {/* 🔹 Mini Tabs */}
+      <div className="assets-tabs">
+        <button
+          className={activeTab === "Assets" ? "active-tab" : ""}
+          onClick={() => setActiveTab("Assets")}
+        >
+          Assets
+        </button>
+        <button
+          className={activeTab === "Form" ? "active-tab" : ""}
+          onClick={() => setActiveTab("Form")}
+        >
+          Form
+        </button>
       </div>
+
+      {/* 🔹 Tab Content */}
+      {activeTab === "Assets" && (
+        <div className="assets-grid">
+          {uniqueAssets.map((asset) => (
+            <div key={asset.name} className="asset-card">
+              <div className="asset-image">
+                <img src={asset.image} alt={asset.name} />
+              </div>
+              <h3>{asset.name}</h3>
+              <p className="count">Total: {asset.quantity}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === "Form" && <AssetsAllocationForm />}
     </div>
   );
 }

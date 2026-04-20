@@ -1,11 +1,12 @@
 import React from "react";
-import "../pages/AdminDashboard.css"; 
 
 const StatsCard = ({ title, value }) => {
   return (
-    <div className="stats-card">
-      <h4>{title}</h4>
-      <p>{value}</p>
+    <div className="stat-card">
+      <span className="stat-label">{title}</span>
+      <h2 className="stat-value" style={{ color: '#6366f1' }}>
+        {value.toLocaleString()}
+      </h2>
     </div>
   );
 };

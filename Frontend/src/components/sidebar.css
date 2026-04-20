@@ -7,8 +7,8 @@
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);  
   display: flex;
   flex-direction: column;
-  padding: 0;
   font-family: Arial, sans-serif;
+  transition: 0.3s;
 }
 
 /* ================= LOGO ================= */
@@ -16,25 +16,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 0;  /* more space at top/bottom */
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
 }
 
 .logo-circle {
-  width: 140px;   /* larger for better visibility */
-  height: 140px;
-  /* border-radius: 50%; */
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1); */
+  width: 100px;
+  height: 100px;
 }
 
 .logo-circle img {
-  width: 80%;      /* fit nicely inside the circle */
-  height: 80%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -44,7 +37,6 @@
   color: #aaa;
   margin: 15px 20px 5px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 /* ================= MENU ================= */
@@ -58,15 +50,11 @@
   font-size: 14px;
   color: #555;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
 .menu-item:hover {
   background: #646cff;
-  color: #fff;
-}
-
-.menu-item:hover svg {
   color: #fff;
 }
 
@@ -75,12 +63,7 @@
   color: #fff;
 }
 
-.menu-item.active svg {
-  color: #fff;
-}
-
 .menu-item svg {
-  font-size: 16px;
   color: #888;
 }
 
@@ -98,12 +81,11 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #5a60d3;
+  background: #646cff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-weight: bold;
+  color: white;
 }
 
 .profile-text span {
@@ -113,6 +95,33 @@
 
 .profile-text strong {
   font-size: 14px;
-  display: block;
   color: #333;
+}
+
+/* ================= OVERLAY ================= */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 999;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    z-index: 1000;
+    height: 100vh;
+    width: 250px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/images/icons/logo.png"; // ✅ small fix
+import logo from "../assets/Images/icons/logo.png";
 import {
   FaTachometerAlt,
   FaLaptop,
@@ -11,14 +11,15 @@ import {
 
 import "./sidebar.css";
 
-export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
+export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
   const [active, setActive] = useState("Dashboard");
+
+  console.log('Sidebar rendered, isOpen:', isOpen);
 
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt /> },
     { name: "Assets", icon: <FaLaptop /> },
-    { name: "Assets Allocation", icon: <FaUsers /> },
-    { name: "Assignees", icon: <FaUsers /> },
+    { name: "Employee List", icon: <FaUsers /> },
     { name: "Incident Log", icon: <FaTools /> },
   ];
 
@@ -26,16 +27,6 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
     { name: "Reports", icon: <FaChartBar /> },
     { name: "Settings", icon: <FaCog /> },
   ];
-
-  const handleClick = (name) => {
-    setActive(name);
-    setActivePage(name);
-
-    // 👇 only mobile pe close karo
-    if (window.innerWidth < 768) {
-      toggleSidebar();
-    }
-  };
 
   return (
     <>
@@ -59,7 +50,11 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
             <div
               key={item.name}
               className={`menu-item ${active === item.name ? "active" : ""}`}
-              onClick={() => handleClick(item.name)}
+              onClick={() => {
+                setActive(item.name);
+                setActivePage(item.name);
+                toggleSidebar();
+              }}
             >
               {item.icon} <span>{item.name}</span>
             </div>
@@ -74,7 +69,11 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
             <div
               key={item.name}
               className={`menu-item ${active === item.name ? "active" : ""}`}
-              onClick={() => handleClick(item.name)}
+              onClick={() => {
+                setActive(item.name);
+                setActivePage(item.name);
+                toggleSidebar();
+              }}
             >
               {item.icon} <span>{item.name}</span>
             </div>
