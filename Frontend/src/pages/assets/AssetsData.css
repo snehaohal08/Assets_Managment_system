@@ -146,9 +146,19 @@
 }
 
 /* ================= FORM ================= */
+* {
+  box-sizing: border-box;
+}
+
+.assets-container {
+  width: 95%;
+  margin: auto;
+  padding: 10px;
+}
+
+/* FORM */
 .compact-form {
   width: 100%;
-  margin: 0;
   background: #fff;
   padding: 15px;
   border-radius: 10px;
@@ -165,10 +175,12 @@
   display: flex;
   gap: 15px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .form-field {
-  flex: 1;
+  flex: 1 1 calc(25% - 12px);
+  min-width: 180px;
   display: flex;
   flex-direction: column;
 }
@@ -181,7 +193,7 @@
 
 .form-field input,
 .form-field select {
-  height: 32px;
+  height: 34px;
   padding: 5px 8px;
   font-size: 13px;
   border: 1px solid #ddd;
@@ -194,26 +206,88 @@
   border-color: #646cff;
 }
 
+/* BUTTON */
 .button-field {
+  flex: 1 1 calc(25% - 12px);
   display: flex;
   align-items: flex-end;
+  margin-top: 18px;
 }
 
 .button-field button {
   width: 100%;
-  height: 32px;
-  background: #646cff;
+  height: 36px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  padding: 10px;
 }
 
 .button-field button:hover {
   background: #4338ca;
 }
 
+/* TABLE */
+.table-container {
+  margin-top: 25px;
+}
+
+.assets-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.assets-table th {
+  background: #4f46e5;
+  color: white;
+  padding: 10px;
+}
+
+.assets-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.assets-table button {
+  padding: 5px 10px;
+  margin: 2px;
+  border: none;
+  border-radius: 6px;
+  
+  cursor: pointer;
+}
+
+.assets-table button:first-child {
+  background: orange;
+  color: white;
+}
+
+.assets-table button:last-child {
+  background: red;
+  color: white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .form-field {
+    flex: 1 1 45%;
+  }
+}
+
+@media (max-width: 500px) {
+  .form-field {
+    flex: 1 1 100%;
+  }
+
+  .button-field {
+    flex: 1 1 100%;
+  }
+}
 /* ================= TABLE ================= */
 .table-container {
   width: 100%;

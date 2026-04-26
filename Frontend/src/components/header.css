@@ -115,3 +115,76 @@
     display: none; /* hide reminder on mobile */
   }
 }
+/* ================= EXTRA RESPONSIVE FIX ================= */
+
+/* 📱 Tablet */
+@media (max-width: 1024px) {
+
+  .header-wrapper {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .reminder-card {
+    max-width: 250px; /* shrink */
+  }
+
+  .main-input {
+    font-size: 13px;
+  }
+}
+
+/* 📱 Mobile */
+@media (max-width: 768px) {
+
+  .header-wrapper {
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  /* search ko hide nahi, compact karo */
+  .search-container {
+    display: flex;
+    flex: 1;
+    padding: 6px 10px;
+  }
+
+  .search-icon {
+    left: 10px;
+    font-size: 12px;
+  }
+
+  .main-input {
+    font-size: 12px;
+    padding-left: 18px;
+  }
+
+  /* reminder hide */
+  .reminder-card {
+    display: none;
+  }
+}
+
+/* 📱 Small Mobile */
+@media (max-width: 480px) {
+
+  .header-wrapper {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+
+  .search-container {
+    width: 100%;
+    order: 3; /* niche shift */
+  }
+
+  .hamburger {
+    font-size: 20px;
+    padding: 8px;
+  }
+}

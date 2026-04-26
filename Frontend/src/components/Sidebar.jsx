@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/images/icons/logo.png"; // ✅ small fix
+import logo from "../assets/images/icons/logo.png";
 import {
   FaTachometerAlt,
   FaLaptop,
@@ -31,16 +31,17 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
     setActive(name);
     setActivePage(name);
 
-    // 👇 only mobile pe close karo
     if (window.innerWidth < 768) {
-      toggleSidebar();
+      toggleSidebar(); // mobile pe close
     }
   };
 
   return (
     <>
       {/* Overlay */}
-      {isOpen && <div className="overlay" onClick={toggleSidebar}></div>}
+      {isOpen && (
+        <div className="overlay show" onClick={toggleSidebar}></div>
+      )}
 
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
 
@@ -52,7 +53,7 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
         </div>
 
         {/* MENU */}
-        <div className="sidebar-section">
+        <div>
           <p className="section-title">Menu</p>
 
           {menuItems.map((item) => (
@@ -67,7 +68,7 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
         </div>
 
         {/* GENERAL */}
-        <div className="sidebar-section">
+        <div>
           <p className="section-title">General</p>
 
           {generalItems.map((item) => (

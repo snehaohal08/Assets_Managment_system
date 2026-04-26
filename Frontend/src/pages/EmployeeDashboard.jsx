@@ -5,7 +5,6 @@ import axios from "axios";
 import AssetsBarChart from "../components/AssetsBarChart";
 import DonutChart from "../components/DonutChart";
 import AssetsData from "./assets/AssetsData";
-import "./AdminDashboard.css";
 import AssetsAllocation from "./assets/AssetsAllocation";
 import Breadcrumb from "./assets/Breadcrumb";
 import SideBar_emp from "../components/SideBar_emp";
@@ -13,38 +12,54 @@ import EmployeeList from "./employee/EmployeeList";
 import IncidentList from "./employee/IncidentList";
 import EmployeeForm from "./employee/EmployeeForm";
 
+import "./AdminDashboard.css";
+
 export default function EmployeeDashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [assets, setAssets] = useState([]);
-
   const [search, setSearch] = useState("");
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
-
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
-  // ✅ ADD EMPLOYEE + NOTIFICATION
+  const showHeaderActions =
+    activePage === "Dashboard" || activePage === "Employee List";
+
+  // ✅ EMPLOYEE NOTIFICATION
   const addEmployee = (data) => {
     setEmployees((prev) => [...prev, data]);
     setShowForm(false);
 
-    const newNotification = {
-      id: Date.now(),
-      message: `Employee ${data?.name || "New Employee"} added`,
-      time: new Date().toLocaleTimeString(),
-    };
-
-    setNotifications((prev) => [newNotification, ...prev]);
+    setNotifications((prev) => [
+      {
+        id: Date.now(),
+        title: `Employee Added`,
+        problem: data?.name || "New Employee",
+        time: new Date().toLocaleTimeString(),
+      },
+      ...prev,
+    ]);
   };
 
-  // ✅ REMOVE NOTIFICATION ON CLICK
+  // ✅ INCIDENT NOTIFICATION (MAIN)
+  const addIncidentNotification = (data) => {
+    setNotifications((prev) => [
+      {
+        id: Date.now(),
+        title: `Incident: ${data.assetName}`,
+        problem: data.issue,
+        time: new Date().toLocaleTimeString(),
+      },
+      ...prev,
+    ]);
+  };
+
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  // FETCH DATA
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets")
@@ -53,32 +68,26 @@ export default function EmployeeDashboard() {
   }, []);
 
   const totalAssets = assets.reduce((sum, a) => sum + a.quantity, 0);
-  const assignedAssets = 0;
-  const availableAssets = totalAssets - assignedAssets;
 
   const stats = [
     { label: "Total Asset", value: totalAssets },
-    { label: "Assets Assigned", value: assignedAssets },
-    { label: "Assets Available", value: availableAssets },
+    { label: "Assets Assigned", value: 0 },
+    { label: "Assets Available", value: totalAssets },
     { label: "Assets Under Repair", value: 0 },
     { label: "Assets Due for Replacement", value: 0 },
   ];
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // FORM VIEW
   if (showForm) {
     return (
-      <EmployeeForm
-        addEmployee={addEmployee}
-        goBack={() => setShowForm(false)}
-      />
+      <EmployeeForm addEmployee={addEmployee} goBack={() => setShowForm(false)} />
     );
   }
 
   return (
     <div className="dashboard-container">
-      {/* SIDEBAR */}
+
       <SideBar_emp
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
@@ -89,114 +98,109 @@ export default function EmployeeDashboard() {
         <div className="sidebar-backdrop" onClick={toggleSidebar}></div>
       )}
 
-      {/* MAIN CONTENT */}
       <div className="main-content">
+
         {/* HEADER */}
         <div className="header">
-          <h2>Employee Dashboard</h2>
+          <h2>
+            {activePage === "Dashboard" ? "Employee Dashboard" : activePage}
+          </h2>
 
           <div className="header-right">
-            {/* SEARCH */}
+
             <div className="search-box">
               <FaSearch />
               <input
-                type="text"
-                placeholder="Search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
               />
             </div>
 
-            {/* ADD BUTTON */}
-            <button className="add-btn" onClick={() => setShowForm(true)}>
-              Add Employee
-            </button>
+            {showHeaderActions && (
+              <>
+                <button className="add-btn" onClick={() => setShowForm(true)}>
+                  Add Employee
+                </button>
 
-            {/* 🔔 NOTIFICATION */}
-            <div
-              className="bell-container"
-              onClick={() => setShowNotifications(true)}
-            >
-              <FaBell className="bell" />
-              {notifications.length > 0 && (
-                <span className="bell-badge">
-                  {notifications.length}
-                </span>
-              )}
-            </div>
+                <div
+                  className="bell-container"
+                  onClick={() => setShowNotifications(true)}
+                >
+                  <FaBell />
+                  {notifications.length > 0 && (
+                    <span className="bell-badge">{notifications.length}</span>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* 🔥 NOTIFICATION SIDE PANEL */}
+        {/* 🔥 NOTIFICATION PANEL */}
         {showNotifications && (
-          <div className="notification-panel">
-            <div className="notification-header">
-              <h3>Notifications</h3>
-              <span onClick={() => setShowNotifications(false)}>✖</span>
-            </div>
+          <>
+            <div
+              className="notification-overlay"
+              onClick={() => setShowNotifications(false)}
+            ></div>
 
-            {/* LIST */}
-            <div className="notification-list">
-              {notifications.length === 0 ? (
-                <p>No Notifications</p>
-              ) : (
-                notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    className="notification-card"
-                    onClick={() => removeNotification(n.id)} // 🔥 click remove
-                    style={{ cursor: "pointer" }}
-                  >
-                    <div className="left-line"></div>
+            <div className="notification-panel">
+              <div className="panel-header">
+                <h3>Notifications</h3>
+                <span onClick={() => setShowNotifications(false)}>✖</span>
+              </div>
 
-                    <div className="notification-content">
-                      <h4>{n.message}</h4>
-                      <p>New activity in system</p>
+              <div className="panel-body">
+                {notifications.length === 0 ? (
+                  <p>No Notifications</p>
+                ) : (
+                  notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className="notification-card"
+                      onClick={() => removeNotification(n.id)}
+                    >
+                      <div className="left-line"></div>
+
+                      <div className="notification-content">
+                        <h4>{n.title}</h4>
+                        <p>{n.problem}</p>
+                      </div>
+
+                      <span className="time">{n.time}</span>
                     </div>
-
-                    <span className="time">{n.time}</span>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* BREADCRUMB */}
-        {(activePage === "Assets" ||
-          activePage === "Assets Allocation") && (
-          <Breadcrumb
-            activePage={activePage}
-            setActivePage={setActivePage}
-          />
+          </>
         )}
 
         {/* DASHBOARD */}
         {activePage === "Dashboard" && (
           <div className="dashboard-body">
+
             <div className="stats-column">
-              {stats.map((item, index) => (
-                <div className="stat-card" key={index}>
-                  <span className="stat-label">{item.label}</span>
-                  <span className="stat-value">{item.value}</span>
+              {stats.map((s, i) => (
+                <div className="stat-card" key={i}>
+                  <span className="stat-label">{s.label}</span>
+                  <span className="stat-value">{s.value}</span>
                 </div>
               ))}
             </div>
 
             <div className="right-section">
               <div className="chart-wrapper">
-                <h3>Assets</h3>
                 <AssetsBarChart />
               </div>
 
               <div className="bottom-grid">
                 <div className="pie-card">
-                  <h3>Tickets Issued</h3>
                   <DonutChart />
                 </div>
 
                 <div className="repair-card">
-                  <h3>Repair Due Dates</h3>
                   <table>
                     <tbody>
                       <tr>
@@ -209,10 +213,10 @@ export default function EmployeeDashboard() {
                 </div>
               </div>
             </div>
+
           </div>
         )}
 
-        {/* PAGES */}
         {activePage === "Assets" && (
           <AssetsData setActivePage={setActivePage} />
         )}
@@ -227,7 +231,11 @@ export default function EmployeeDashboard() {
           />
         )}
 
-        {activePage === "Incident Log" && <IncidentList />}
+        {/* 🔥 INCIDENT PASS NOTIFICATION FUNCTION */}
+        {activePage === "Incident Log" && (
+          <IncidentList addNotification={addIncidentNotification} />
+        )}
+
       </div>
     </div>
   );

@@ -1,81 +1,59 @@
 import React, { useState } from "react";
 import "./Incident.css";
-import { FaTrash, FaEdit, FaEye,  FaSearch, FaBell } from "react-icons/fa";
+import { FaTrash, FaEdit, FaEye, FaBell } from "react-icons/fa";
 import IncidentForm from "./IncidentForm";
 
-export default function IncidentList() {
+export default function IncidentList({ addNotification }) {
+
   const [incidents, setIncidents] = useState([]);
+  const [notifications, setNotifications] = useState([]); // ✅ LOCAL
+  const [showPanel, setShowPanel] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
-
-  const [searchTerm, setSearchTerm] = useState(""); // ✅ NEW
-
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
-  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
-  const [showUpdateSuccess, setShowUpdateSuccess] = useState(false);
-  const [showViewAlert, setShowViewAlert] = useState(false);
-  const [viewData, setViewData] = useState(null);
+  const total = incidents.length;
+  const pending = incidents.filter(i => i.status === "Pending").length;
+  const inProgress = incidents.filter(i => i.status === "In Progress").length;
+  const resolved = incidents.filter(i => i.status === "Resolved").length;
 
-  // ADD / UPDATE
+  // ✅ ADD INCIDENT (BOTH SIDE)
   const addIncident = (data) => {
-    if (editIndex !== null) {
-      const updated = [...incidents];
-      updated[editIndex] = data;
-      setIncidents(updated);
-      setEditIndex(null);
+    setIncidents(prev => [...prev, data]);
 
-      setShowUpdateSuccess(true);
-      setTimeout(() => setShowUpdateSuccess(false), 3000);
-    } else {
-      setIncidents([...incidents, data]);
-    }
+    const time = new Date().toLocaleTimeString();
+
+    // 🔥 LOCAL NOTIFICATION (Incident Page)
+    setNotifications(prev => [
+      {
+        title: `Incident added for ${data.assetName}`,
+        subtitle: data.issue,
+        time: time,
+      },
+      ...prev
+    ]);
+
+    // 🔥 GLOBAL NOTIFICATION (Dashboard)
+    addNotification(data);
+
     setShowForm(false);
   };
 
-  // DELETE
-  const confirmDelete = () => {
-    const updated = incidents.filter((_, i) => i !== deleteIndex);
-    setIncidents(updated);
-    setShowDeletePopup(false);
-
-    setShowDeleteSuccess(true);
-    setTimeout(() => setShowDeleteSuccess(false), 3000);
+  const handleDeleteClick = (index) => {
+    setDeleteIndex(index);
+    setShowPopup(true);
   };
 
-  // ✅ SEARCH FILTER
-  const filteredIncidents = incidents.filter((inc) =>
-    inc.assetName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    inc.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    inc.issue?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // COUNTS
-  const activeCount = incidents.filter(
-    (i) => i.status === "Pending" || i.status === "In Progress"
-  ).length;
-
-  const resolvedCount = incidents.filter(
-    (i) => i.status === "Resolved"
-  ).length;
-
-  const dueCount = incidents.filter((i) => {
-    if (i.status !== "Resolved") {
-      return new Date(i.createdDate) < new Date();
-    }
-    return false;
-  }).length;
+  const confirmDelete = () => {
+    setIncidents(prev => prev.filter((_, i) => i !== deleteIndex));
+    setShowPopup(false);
+  };
 
   if (showForm) {
     return (
       <IncidentForm
         addIncident={addIncident}
-        goBack={() => {
-          setShowForm(false);
-          setEditIndex(null);
-        }}
-        editData={editIndex !== null ? incidents[editIndex] : null}
+        goBack={() => setShowForm(false)}
       />
     );
   }
@@ -85,50 +63,31 @@ export default function IncidentList() {
 
       {/* HEADER */}
       <div className="incident-header">
-        <h2>Incident List</h2>
+        <div className="incident-actions-header">
 
-        <div className="header-right">
-          
-          {/* 🔍 SEARCH */}
-          <div className="search-box">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search..."
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          {/* 🔔 LOCAL BELL */}
+          <div className="bell-container" onClick={() => setShowPanel(true)}>
+            <FaBell className="bell" />
+            {notifications.length > 0 && (
+              <span className="bell-badge">{notifications.length}</span>
+            )}
           </div>
 
-          {/* 🔔 NOTIFICATION */}
-          <div className="bell-container">
-           <FaBell className="bell" />
-            {dueCount > 0 && <span className="bell-badge">{dueCount}</span>}
-          </div>
-
-          {/* ADD BUTTON */}
-          <button className="incident-add-btn" onClick={() => setShowForm(true)}>
-            Add Incedent
+          <button
+            className="incident-add-btn"
+            onClick={() => setShowForm(true)}
+          >
+            Add Incident
           </button>
-
         </div>
       </div>
 
-      {/* SUMMARY */}
+      {/* CARDS */}
       <div className="incident-summary">
-        <div className="incident-card active">
-          <h3>{activeCount}</h3>
-          <p>Active</p>
-        </div>
-
-        <div className="incident-card resolved">
-          <h3>{resolvedCount}</h3>
-          <p>Resolved</p>
-        </div>
-
-        <div className="incident-card due">
-          <h3>{dueCount}</h3>
-          <p>Due</p>
-        </div>
+        <div className="incident-card"><h3>{total}</h3><p>Total</p></div>
+        <div className="incident-card pending"><h3>{pending}</h3><p>Pending</p></div>
+        <div className="incident-card progress"><h3>{inProgress}</h3><p>In Progress</p></div>
+        <div className="incident-card resolved"><h3>{resolved}</h3><p>Resolved</p></div>
       </div>
 
       {/* TABLE */}
@@ -136,31 +95,24 @@ export default function IncidentList() {
         <table>
           <thead>
             <tr>
-              <th>Sr No</th>
-              <th>Asset Name & ID</th>
-              <th>Employee Name</th>
+              <th>Id</th>
+              <th>Asset</th>
+              <th>Employee</th>
               <th>Issue</th>
               <th>Status</th>
-              <th>Created Date</th>
+              <th>Date</th>
               <th>Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredIncidents.length === 0 ? (
-              <tr>
-                <td colSpan="7">No Data</td>
-              </tr>
+            {incidents.length === 0 ? (
+              <tr><td colSpan="7">No Data</td></tr>
             ) : (
-              filteredIncidents.map((inc, index) => (
+              incidents.map((inc, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-
-                  <td>
-                    <b>{inc.assetName}</b>
-                    <div className="sub">{inc.assetId}</div>
-                  </td>
-
+                  <td>{inc.assetName}</td>
                   <td>{inc.employeeName}</td>
                   <td>{inc.issue}</td>
 
@@ -175,7 +127,7 @@ export default function IncidentList() {
                   <td className="incident-actions">
                     <FaEye />
                     <FaEdit />
-                    <FaTrash />
+                    <FaTrash onClick={() => handleDeleteClick(index)} />
                   </td>
                 </tr>
               ))
@@ -183,6 +135,64 @@ export default function IncidentList() {
           </tbody>
         </table>
       </div>
+
+      {/* 🔥 LOCAL NOTIFICATION PANEL */}
+      {showPanel && (
+        <>
+          <div
+            className="notification-overlay"
+            onClick={() => setShowPanel(false)}
+          ></div>
+
+          <div className="notification-panel">
+            <div className="panel-header">
+              <h3>Incident Notifications</h3>
+              <span className="close-btn" onClick={() => setShowPanel(false)}>
+                ✕
+              </span>
+            </div>
+
+            <div className="panel-body">
+              {notifications.length === 0 ? (
+                <p>No Notifications</p>
+              ) : (
+                notifications.map((note, i) => (
+                  <div key={i} className="notification-card">
+
+                    <div className="left-line"></div>
+
+                    <div className="notification-content">
+                      <h4>{note.title}</h4>
+                      <p>{note.subtitle}</p>
+                    </div>
+
+                    <div className="time">{note.time}</div>
+
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* DELETE POPUP */}
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h3>Delete?</h3>
+            <p>Are you sure?</p>
+
+            <div className="popup-buttons">
+              <button onClick={() => setShowPopup(false)}>Cancel</button>
+              <button className="delete-btn" onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

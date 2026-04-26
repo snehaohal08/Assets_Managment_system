@@ -4,7 +4,6 @@ import "./EmployeeList.css";
 import popup from "../../assets/images/png/popup.png";
 import cross from "../../assets/images/png/cross.png";
 
-
 export default function EmployeeForm({ addEmployee, goBack }) {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -15,7 +14,6 @@ export default function EmployeeForm({ addEmployee, goBack }) {
     assetsCategory: "",
     email: "",
     contact: "",
-  
     department: "",
     dateOfJoining: "",
   });
@@ -24,27 +22,56 @@ export default function EmployeeForm({ addEmployee, goBack }) {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("");
 
-  // HANDLE INPUT
+  // ✅ COMMON INPUT HANDLER
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  // VALIDATION
+  // ✅ CONTACT INPUT HANDLER (FIXED)
+  const handleContactChange = (e) => {
+    let value = e.target.value;
+
+    // allow only numbers
+    value = value.replace(/[^0-9]/g, "");
+
+    // max 10 digits
+    if (value.length > 10) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      contact: value,
+    }));
+
+    if (errors.contact) {
+      setErrors((prev) => ({ ...prev, contact: "" }));
+    }
+  };
+
+  // ✅ VALIDATION
   const validate = () => {
     let newErrors = {};
 
     if (!formData.firstName.trim())
       newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.id.trim()) newErrors.id = "Employee ID is required";
+
+    if (!formData.lastName.trim())
+      newErrors.lastName = "Last name is required";
+
+    if (!formData.id.trim())
+      newErrors.id = "Employee ID is required";
 
     if (!formData.brandModel.trim())
       newErrors.brandModel = "Brand & Model is required";
+
     if (!formData.assetsCategory.trim())
       newErrors.assetsCategory = "Category is required";
 
@@ -62,44 +89,47 @@ export default function EmployeeForm({ addEmployee, goBack }) {
 
     if (!formData.department.trim())
       newErrors.department = "Department is required";
-    if (!formData.dateOfJoining) newErrors.dateOfJoining = "Select date";
+
+    if (!formData.dateOfJoining)
+      newErrors.dateOfJoining = "Select date";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // SUBMIT
+  // ✅ SUBMIT
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (validate()) {
-    addEmployee(formData);
+    if (validate()) {
+      addEmployee(formData);
 
-    setAlertMsg("Employee Added Successfully!");
-    setAlertType("success");
+      setAlertMsg("Employee Added Successfully!");
+      setAlertType("success");
 
-    setTimeout(() => {
-      setAlertMsg("");
-      goBack();   // ✅ yaha close karo form
-    }, 1500);
+      setTimeout(() => {
+        setAlertMsg("");
+        goBack();
+      }, 1500);
+    } else {
+      setAlertMsg("Please fill all required fields!");
+      setAlertType("error");
 
-  } else {
-    setAlertMsg("Please fill all required fields!");
-    setAlertType("error");
+      setTimeout(() => {
+        setAlertMsg("");
+      }, 3000);
+    }
+  };
 
-    setTimeout(() => {
-      setAlertMsg("");
-    }, 3000);
-  }
-};
   return (
     <div className="container">
       <h2>Add Employee</h2>
 
-      {/* ✅ FORM START */}
       <form onSubmit={handleSubmit} className="form-container">
+
+        {/* FIRST NAME */}
         <div className="form-group">
-          <label>First Name <span className="error">*</span></label>
+          <label>First Name *</label>
           <input
             name="firstName"
             value={formData.firstName}
@@ -108,6 +138,7 @@ export default function EmployeeForm({ addEmployee, goBack }) {
           {errors.firstName && <p className="error">{errors.firstName}</p>}
         </div>
 
+        {/* MIDDLE NAME */}
         <div className="form-group">
           <label>Middle Name</label>
           <input
@@ -117,8 +148,9 @@ export default function EmployeeForm({ addEmployee, goBack }) {
           />
         </div>
 
+        {/* LAST NAME */}
         <div className="form-group">
-          <label>Last Name <span className="error">*</span></label>
+          <label>Last Name *</label>
           <input
             name="lastName"
             value={formData.lastName}
@@ -127,14 +159,20 @@ export default function EmployeeForm({ addEmployee, goBack }) {
           {errors.lastName && <p className="error">{errors.lastName}</p>}
         </div>
 
+        {/* EMPLOYEE ID */}
         <div className="form-group">
-          <label>Employee ID <span className="error">*</span></label>
-          <input name="id" value={formData.id} onChange={handleChange} />
+          <label>Employee ID *</label>
+          <input
+            name="id"
+            value={formData.id}
+            onChange={handleChange}
+          />
           {errors.id && <p className="error">{errors.id}</p>}
         </div>
 
+        {/* BRAND */}
         <div className="form-group">
-          <label>Brand & Model <span className="error">*</span></label>
+          <label>Brand & Model *</label>
           <input
             name="brandModel"
             value={formData.brandModel}
@@ -143,8 +181,9 @@ export default function EmployeeForm({ addEmployee, goBack }) {
           {errors.brandModel && <p className="error">{errors.brandModel}</p>}
         </div>
 
+        {/* CATEGORY */}
         <div className="form-group">
-          <label>Assets Category <span className="error">*</span></label>
+          <label>Assets Category *</label>
           <input
             name="assetsCategory"
             value={formData.assetsCategory}
@@ -155,26 +194,33 @@ export default function EmployeeForm({ addEmployee, goBack }) {
           )}
         </div>
 
+        {/* EMAIL */}
         <div className="form-group">
-          <label>Email <span className="error">*</span></label>
-          <input name="email" value={formData.email} onChange={handleChange} />
+          <label>Email *</label>
+          <input
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
           {errors.email && <p className="error">{errors.email}</p>}
         </div>
 
+        {/* 🔥 CONTACT FIXED */}
         <div className="form-group">
-          <label>Contact <span className="error">*</span></label>
+          <label>Contact *</label>
           <input
+            type="text"
             name="contact"
             value={formData.contact}
-            onChange={handleChange}
+            onChange={handleContactChange}
+            placeholder="Enter 10 digit number"
           />
           {errors.contact && <p className="error">{errors.contact}</p>}
         </div>
 
-  
-
+        {/* DEPARTMENT */}
         <div className="form-group">
-          <label>Department <span className="error">*</span></label>
+          <label>Department *</label>
           <input
             name="department"
             value={formData.department}
@@ -183,8 +229,9 @@ export default function EmployeeForm({ addEmployee, goBack }) {
           {errors.department && <p className="error">{errors.department}</p>}
         </div>
 
+        {/* DATE */}
         <div className="form-group">
-          <label>Date of Joining <span className="error">*</span></label>
+          <label>Date of Joining *</label>
           <input
             type="date"
             name="dateOfJoining"
@@ -198,16 +245,14 @@ export default function EmployeeForm({ addEmployee, goBack }) {
 
         {/* BUTTONS */}
         <div className="form-buttons">
-          <button type="submit" className="save-btn">
-            Submit
-          </button>
+          <button type="submit" className="save-btn">Submit</button>
           <button type="button" className="cancel-btn" onClick={goBack}>
             Cancel
           </button>
         </div>
       </form>
 
-      {/* ✅ ALERT */}
+      {/* ALERT */}
       {alertMsg && (
         <div className={`custom-alert-box ${alertType}`}>
           <img src={alertType === "success" ? popup : cross} alt="icon" />

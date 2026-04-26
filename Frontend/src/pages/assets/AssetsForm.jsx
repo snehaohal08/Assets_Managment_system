@@ -14,16 +14,12 @@ export default function AssetsForm() {
 
   const [assetsList, setAssetsList] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
-
-  // Sorting state
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
 
-  // Handle Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -47,19 +43,15 @@ export default function AssetsForm() {
     });
   };
 
-  // Edit
   const handleEdit = (index) => {
     setFormData(assetsList[index]);
     setEditIndex(index);
   };
 
-  // Delete
   const handleDelete = (index) => {
-    const newList = assetsList.filter((_, i) => i !== index);
-    setAssetsList(newList);
+    setAssetsList(assetsList.filter((_, i) => i !== index));
   };
 
-  // Sorting
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -79,40 +71,27 @@ export default function AssetsForm() {
 
   return (
     <div className="assets-container">
-      
-      {/* ================= FORM ================= */}
+
+      {/* FORM */}
       <form className="compact-form" onSubmit={handleSubmit}>
         <div className="form-title">
           {editIndex !== null ? "Update Asset" : "Add Asset"}
         </div>
 
-        {/* ROW 1 */}
         <div className="form-row">
           <div className="form-field">
             <label>Asset Name</label>
-            <input
-              name="assetName"
-              value={formData.assetName}
-              onChange={handleChange}
-            />
+            <input name="assetName" value={formData.assetName} onChange={handleChange} />
           </div>
 
           <div className="form-field">
             <label>Asset ID</label>
-            <input
-              name="assetId"
-              value={formData.assetId}
-              onChange={handleChange}
-            />
+            <input name="assetId" value={formData.assetId} onChange={handleChange} />
           </div>
 
           <div className="form-field">
             <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
+            <select name="category" value={formData.category} onChange={handleChange}>
               <option value="">Select</option>
               <option>Laptop</option>
               <option>Keyboard</option>
@@ -123,34 +102,19 @@ export default function AssetsForm() {
 
           <div className="form-field">
             <label>Brand & Model</label>
-            <input
-              name="brandModel"
-              value={formData.brandModel}
-              onChange={handleChange}
-            />
+            <input name="brandModel" value={formData.brandModel} onChange={handleChange} />
           </div>
         </div>
 
-        {/* ROW 2 */}
         <div className="form-row">
           <div className="form-field">
             <label>Purchase Date</label>
-            <input
-              type="date"
-              name="purchaseDate"
-              value={formData.purchaseDate}
-              onChange={handleChange}
-            />
+            <input type="date" name="purchaseDate" value={formData.purchaseDate} onChange={handleChange} />
           </div>
 
           <div className="form-field">
             <label>Warranty Date</label>
-            <input
-              type="date"
-              name="warrantyDate"
-              value={formData.warrantyDate}
-              onChange={handleChange}
-            />
+            <input type="date" name="warrantyDate" value={formData.warrantyDate} onChange={handleChange} />
           </div>
 
           <div className="form-field">
@@ -166,38 +130,16 @@ export default function AssetsForm() {
         </div>
       </form>
 
-      {/* ================= TABLE ================= */}
+      {/* TABLE */}
       <div className="table-container">
         <h2>Assets List</h2>
 
         <table className="assets-table">
           <thead>
             <tr>
-              <th onClick={() => handleSort("assetName")}>
-                Name{" "}
-                {sortConfig.key === "assetName"
-                  ? sortConfig.direction === "asc"
-                    ? "🔼"
-                    : "🔽"
-                  : "⬍"}
-              </th>
-              <th onClick={() => handleSort("assetId")}>
-                ID{" "}
-                {sortConfig.key === "assetId"
-                  ? sortConfig.direction === "asc"
-                    ? "🔼"
-                    : "🔽"
-                  : "⬍"}
-              </th>
-
-              <th onClick={() => handleSort("category")}>
-                Category{" "}
-                {sortConfig.key === "category"
-                  ? sortConfig.direction === "asc"
-                    ? "🔼"
-                    : "🔽"
-                  : "⬍"}
-              </th>
+              <th onClick={() => handleSort("assetName")}>Name</th>
+              <th onClick={() => handleSort("assetId")}>ID</th>
+              <th onClick={() => handleSort("category")}>Category</th>
               <th onClick={() => handleSort("brandModel")}>Brand</th>
               <th onClick={() => handleSort("purchaseDate")}>Purchase</th>
               <th onClick={() => handleSort("warrantyDate")}>Warranty</th>
