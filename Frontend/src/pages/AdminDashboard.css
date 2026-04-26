@@ -171,23 +171,23 @@
     }
   }
 
-  @media (max-width: 768px) {
+  /* @media (max-width: 768px) {
 
   .sidebar {
     position: fixed;
     top: 0;
-    left: -260px;   /* hidden */
+    left: -260px;  
     width: 250px;
     height: 100vh;
     z-index: 2000;
     transition: left 0.3s ease;
-    display: block; /* 🔥 ensure visible */
+    display: block; 
   }
 
   .sidebar.open {
-    left: 0; /* show */
+    left: 0; 
   }
-}
+} */
 
   @media (max-width: 480px) {
     .stat-card {
@@ -444,10 +444,10 @@
     flex-direction: column;
   }
 
-  .sidebar {
+  /* .sidebar {
     width: 100%;
     min-width: 100%;
-  }
+  } */
 
   .dashboard-body {
     flex-direction: column;

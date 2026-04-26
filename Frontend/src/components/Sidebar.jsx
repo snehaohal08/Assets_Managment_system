@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../assets/images/icons/logo.png";
 import {
   FaTachometerAlt,
@@ -31,17 +31,25 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
     setActive(name);
     setActivePage(name);
 
+    // close sidebar on mobile
     if (window.innerWidth < 768) {
-      toggleSidebar(); // mobile pe close
+      toggleSidebar();
     }
   };
+
+  // 🔥 lock body scroll when sidebar open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("sidebar-open");
+    } else {
+      document.body.classList.remove("sidebar-open");
+    }
+  }, [isOpen]);
 
   return (
     <>
       {/* Overlay */}
-      {isOpen && (
-        <div className="overlay" onClick={toggleSidebar}></div>
-      )}
+      {isOpen && <div className="overlay" onClick={toggleSidebar}></div>}
 
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
 
@@ -53,7 +61,7 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
         </div>
 
         {/* MENU */}
-        <div>
+        <div className="sidebar-section">
           <p className="section-title">Menu</p>
 
           {menuItems.map((item) => (
@@ -62,13 +70,14 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
               className={`menu-item ${active === item.name ? "active" : ""}`}
               onClick={() => handleClick(item.name)}
             >
-              {item.icon} <span>{item.name}</span>
+              {item.icon}
+              <span>{item.name}</span>
             </div>
           ))}
         </div>
 
         {/* GENERAL */}
-        <div>
+        <div className="sidebar-section">
           <p className="section-title">General</p>
 
           {generalItems.map((item) => (
@@ -77,7 +86,8 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
               className={`menu-item ${active === item.name ? "active" : ""}`}
               onClick={() => handleClick(item.name)}
             >
-              {item.icon} <span>{item.name}</span>
+              {item.icon}
+              <span>{item.name}</span>
             </div>
           ))}
         </div>

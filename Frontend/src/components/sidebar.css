@@ -1,4 +1,4 @@
-/* SIDEBAR */
+/* ================= SIDEBAR ================= */
 .sidebar {
   width: 250px;
   height: 100vh;
@@ -7,7 +7,9 @@
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1000;
 }
 
 /* LOGO */
@@ -35,11 +37,13 @@
 
 .menu-item {
   display: flex;
+  align-items: center;
   gap: 10px;
   padding: 12px 20px;
   margin: 3px 10px;
   border-radius: 10px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .menu-item:hover,
@@ -67,28 +71,50 @@
   border-radius: 50%;
 }
 
-/* OVERLAY */
+/* ================= OVERLAY ================= */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
+  inset: 0;
+  background: rgba(0,0,0,0.4);
   z-index: 999;
 }
 
-/* MOBILE */
+/* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 768px) {
 
   .sidebar {
     position: fixed;
     top: 0;
     left: -260px;
-    z-index: 1000;
+    height: 100vh;
+    width: 250px;
+    border-radius: 0 20px 20px 0;
+    transition: left 0.3s ease;
   }
 
   .sidebar.open {
     left: 0;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+@media (max-width: 480px) {
+
+  .sidebar {
+    width: 80%;
+  }
+
+  .menu-item {
+    font-size: 14px;
+    padding: 14px 16px;
+  }
+
+  .profile-avatar {
+    width: 35px;
+    height: 35px;
   }
 }

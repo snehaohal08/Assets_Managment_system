@@ -40,6 +40,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="dashboard-container">
+
       {/* SIDEBAR */}
       <Sidebar
         setActivePage={setActivePage}

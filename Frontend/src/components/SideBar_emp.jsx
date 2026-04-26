@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../assets/Images/icons/logo.png";
 import {
   FaTachometerAlt,
@@ -14,7 +14,7 @@ import "./sidebar.css";
 export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
   const [active, setActive] = useState("Dashboard");
 
-  console.log('Sidebar rendered, isOpen:', isOpen);
+  console.log("Sidebar rendered, isOpen:", isOpen);
 
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt /> },
@@ -27,6 +27,25 @@ export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
     { name: "Reports", icon: <FaChartBar /> },
     { name: "Settings", icon: <FaCog /> },
   ];
+
+  // 🔥 lock background scroll when sidebar open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("sidebar-open");
+    } else {
+      document.body.classList.remove("sidebar-open");
+    }
+  }, [isOpen]);
+
+  const handleClick = (name) => {
+    setActive(name);
+    setActivePage(name);
+
+    // close only on mobile
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
 
   return (
     <>
@@ -50,13 +69,10 @@ export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
             <div
               key={item.name}
               className={`menu-item ${active === item.name ? "active" : ""}`}
-              onClick={() => {
-                setActive(item.name);
-                setActivePage(item.name);
-                toggleSidebar();
-              }}
+              onClick={() => handleClick(item.name)}
             >
-              {item.icon} <span>{item.name}</span>
+              {item.icon}
+              <span>{item.name}</span>
             </div>
           ))}
         </div>
@@ -69,13 +85,10 @@ export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
             <div
               key={item.name}
               className={`menu-item ${active === item.name ? "active" : ""}`}
-              onClick={() => {
-                setActive(item.name);
-                setActivePage(item.name);
-                toggleSidebar();
-              }}
+              onClick={() => handleClick(item.name)}
             >
-              {item.icon} <span>{item.name}</span>
+              {item.icon}
+              <span>{item.name}</span>
             </div>
           ))}
         </div>
