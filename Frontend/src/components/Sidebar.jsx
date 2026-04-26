@@ -40,7 +40,7 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
     <>
       {/* Overlay */}
       {isOpen && (
-        <div className="overlay show" onClick={toggleSidebar}></div>
+        <div className="overlay" onClick={toggleSidebar}></div>
       )}
 
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
