@@ -14,8 +14,6 @@ import "./sidebar.css";
 export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
   const [active, setActive] = useState("Dashboard");
 
-  console.log("Sidebar rendered, isOpen:", isOpen);
-
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt /> },
     { name: "Assets", icon: <FaLaptop /> },
@@ -28,7 +26,7 @@ export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
     { name: "Settings", icon: <FaCog /> },
   ];
 
-  // 🔥 lock background scroll when sidebar open
+  // 🔥 lock scroll when sidebar open
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("sidebar-open");
@@ -42,16 +40,17 @@ export default function SideBar_emp({ setActivePage, isOpen, toggleSidebar }) {
     setActivePage(name);
 
     // close only on mobile
-    if (window.innerWidth < 768) {
+    if (window.innerWidth <= 768) {
       toggleSidebar();
     }
   };
 
   return (
     <>
-      {/* Overlay */}
+      {/* OVERLAY */}
       {isOpen && <div className="overlay" onClick={toggleSidebar}></div>}
 
+      {/* SIDEBAR */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
 
         {/* LOGO */}

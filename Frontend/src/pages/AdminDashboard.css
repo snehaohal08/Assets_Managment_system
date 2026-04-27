@@ -7,6 +7,7 @@
     color: #334155;
     overflow-x: hidden;
   }
+  
 
   /* ================= MAIN LAYOUT ================= */
   .dashboard-container {
@@ -512,5 +513,51 @@
 
   .bell {
     font-size: 16px;
+  }
+}
+.left-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ================= TOGGLE ICON ================= */
+.toggle-icon {
+  font-size: 20px;
+  cursor: pointer;
+
+  /* default desktop hidden */
+  display: none;
+
+  width: 40px;
+  height: 40px;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #6366f1;
+  color: #fff;
+
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+/* hover effect (desktop + mobile touch feel) */
+.toggle-icon:hover {
+  background: #4f46e5;
+  transform: scale(1.08);
+}
+
+/* click effect */
+.toggle-icon:active {
+  transform: scale(0.92);
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .toggle-icon {
+    display: flex;
   }
 }

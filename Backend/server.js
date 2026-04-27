@@ -12,6 +12,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/assets", require("./routes/assets"));
+app.use("/api/assets-db", require("./routes/assetsDb"));
 app.use("/api/allocations", require("./routes/asstesAllocation"));
 
 app.listen(5000, () => {

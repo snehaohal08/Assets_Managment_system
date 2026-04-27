@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaBell } from "react-icons/fa";
+import { FaSearch, FaBell, FaBars } from "react-icons/fa";
 import axios from "axios";
 
 import AssetsBarChart from "../components/AssetsBarChart";
 import DonutChart from "../components/DonutChart";
 import AssetsData from "./assets/AssetsData";
 import AssetsAllocation from "./assets/AssetsAllocation";
-import Breadcrumb from "./assets/Breadcrumb";
 import SideBar_emp from "../components/SideBar_emp";
 import EmployeeList from "./employee/EmployeeList";
 import IncidentList from "./employee/IncidentList";
 import EmployeeForm from "./employee/EmployeeForm";
 
 import "./AdminDashboard.css";
+import "../components/sidebar.css";
 
 export default function EmployeeDashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -24,10 +24,12 @@ export default function EmployeeDashboard() {
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+
   const showHeaderActions =
     activePage === "Dashboard" || activePage === "Employee List";
 
-  // ✅ EMPLOYEE NOTIFICATION
+  // ================= EMPLOYEE NOTIFICATION =================
   const addEmployee = (data) => {
     setEmployees((prev) => [...prev, data]);
     setShowForm(false);
@@ -35,7 +37,7 @@ export default function EmployeeDashboard() {
     setNotifications((prev) => [
       {
         id: Date.now(),
-        title: `Employee Added`,
+        title: "Employee Added",
         problem: data?.name || "New Employee",
         time: new Date().toLocaleTimeString(),
       },
@@ -43,7 +45,7 @@ export default function EmployeeDashboard() {
     ]);
   };
 
-  // ✅ INCIDENT NOTIFICATION (MAIN)
+  // ================= INCIDENT NOTIFICATION =================
   const addIncidentNotification = (data) => {
     setNotifications((prev) => [
       {
@@ -60,15 +62,14 @@ export default function EmployeeDashboard() {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/assets")
-      .then((res) => setAssets(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  const totalAssets = assets.reduce((sum, a) => sum + a.quantity, 0);
-
+useEffect(() => {
+  axios
+    .get("http://localhost:5000/api/assets-db")   // ✅ FIXED
+    .then((res) => setAssets(res.data))
+    .catch((err) => console.log(err));
+}, []);
+  const totalAssets = assets?.length || 0;
+// console.log("Assets Data:", assets);
   const stats = [
     { label: "Total Asset", value: totalAssets },
     { label: "Assets Assigned", value: 0 },
@@ -77,17 +78,19 @@ export default function EmployeeDashboard() {
     { label: "Assets Due for Replacement", value: 0 },
   ];
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
   if (showForm) {
     return (
-      <EmployeeForm addEmployee={addEmployee} goBack={() => setShowForm(false)} />
+      <EmployeeForm
+        addEmployee={addEmployee}
+        goBack={() => setShowForm(false)}
+      />
     );
   }
 
   return (
     <div className="dashboard-container">
 
+      {/* ================= SIDEBAR ================= */}
       <SideBar_emp
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
@@ -98,14 +101,24 @@ export default function EmployeeDashboard() {
         <div className="sidebar-backdrop" onClick={toggleSidebar}></div>
       )}
 
+      {/* ================= MAIN CONTENT ================= */}
       <div className="main-content">
 
-        {/* HEADER */}
+        {/* ================= HEADER ================= */}
         <div className="header">
-          <h2>
-            {activePage === "Dashboard" ? "Employee Dashboard" : activePage}
-          </h2>
 
+          {/* LEFT SIDE */}
+          <div className="left-header">
+            <FaBars className="toggle-icon" onClick={toggleSidebar} />
+
+            <h2>
+              {activePage === "Dashboard"
+                ? "Employee Dashboard"
+                : activePage}
+            </h2>
+          </div>
+
+          {/* RIGHT SIDE */}
           <div className="header-right">
 
             <div className="search-box">
@@ -119,7 +132,10 @@ export default function EmployeeDashboard() {
 
             {showHeaderActions && (
               <>
-                <button className="add-btn" onClick={() => setShowForm(true)}>
+                <button
+                  className="add-btn"
+                  onClick={() => setShowForm(true)}
+                >
                   Add Employee
                 </button>
 
@@ -129,7 +145,9 @@ export default function EmployeeDashboard() {
                 >
                   <FaBell />
                   {notifications.length > 0 && (
-                    <span className="bell-badge">{notifications.length}</span>
+                    <span className="bell-badge">
+                      {notifications.length}
+                    </span>
                   )}
                 </div>
               </>
@@ -137,7 +155,7 @@ export default function EmployeeDashboard() {
           </div>
         </div>
 
-        {/* 🔥 NOTIFICATION PANEL */}
+        {/* ================= NOTIFICATION PANEL ================= */}
         {showNotifications && (
           <>
             <div
@@ -177,7 +195,7 @@ export default function EmployeeDashboard() {
           </>
         )}
 
-        {/* DASHBOARD */}
+        {/* ================= DASHBOARD ================= */}
         {activePage === "Dashboard" && (
           <div className="dashboard-body">
 
@@ -221,7 +239,9 @@ export default function EmployeeDashboard() {
           <AssetsData setActivePage={setActivePage} />
         )}
 
-        {activePage === "Assets Allocation" && <AssetsAllocation />}
+        {activePage === "Assets Allocation" && (
+          <AssetsAllocation />
+        )}
 
         {activePage === "Employee List" && (
           <EmployeeList
@@ -231,7 +251,6 @@ export default function EmployeeDashboard() {
           />
         )}
 
-        {/* 🔥 INCIDENT PASS NOTIFICATION FUNCTION */}
         {activePage === "Incident Log" && (
           <IncidentList addNotification={addIncidentNotification} />
         )}

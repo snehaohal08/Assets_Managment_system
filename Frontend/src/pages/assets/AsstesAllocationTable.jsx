@@ -6,7 +6,7 @@ export default function AsstesAllocationTable({ data }) {
       <table className="assets-table">
         <thead>
           <tr>
-            <th>SR No</th>
+            <th>E_id</th>
             <th>Asset Name</th>
             <th>Asset ID</th>
             <th>Assigned To</th>

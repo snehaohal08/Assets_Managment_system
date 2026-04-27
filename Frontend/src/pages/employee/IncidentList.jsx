@@ -6,24 +6,26 @@ import IncidentForm from "./IncidentForm";
 export default function IncidentList({ addNotification }) {
 
   const [incidents, setIncidents] = useState([]);
-  const [notifications, setNotifications] = useState([]); // ✅ LOCAL
+  const [notifications, setNotifications] = useState([]);
   const [showPanel, setShowPanel] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+
+  // ✅ NEW: for VIEW
+  const [selectedIncident, setSelectedIncident] = useState(null);
 
   const total = incidents.length;
   const pending = incidents.filter(i => i.status === "Pending").length;
   const inProgress = incidents.filter(i => i.status === "In Progress").length;
   const resolved = incidents.filter(i => i.status === "Resolved").length;
 
-  // ✅ ADD INCIDENT (BOTH SIDE)
+  // ✅ ADD INCIDENT
   const addIncident = (data) => {
     setIncidents(prev => [...prev, data]);
 
     const time = new Date().toLocaleTimeString();
 
-    // 🔥 LOCAL NOTIFICATION (Incident Page)
     setNotifications(prev => [
       {
         title: `Incident added for ${data.assetName}`,
@@ -33,10 +35,14 @@ export default function IncidentList({ addNotification }) {
       ...prev
     ]);
 
-    // 🔥 GLOBAL NOTIFICATION (Dashboard)
     addNotification(data);
 
     setShowForm(false);
+  };
+
+  // ✅ VIEW INCIDENT
+  const handleView = (incident) => {
+    setSelectedIncident(incident);
   };
 
   const handleDeleteClick = (index) => {
@@ -65,7 +71,7 @@ export default function IncidentList({ addNotification }) {
       <div className="incident-header">
         <div className="incident-actions-header">
 
-          {/* 🔔 LOCAL BELL */}
+          {/* BELL */}
           <div className="bell-container" onClick={() => setShowPanel(true)}>
             <FaBell className="bell" />
             {notifications.length > 0 && (
@@ -95,7 +101,7 @@ export default function IncidentList({ addNotification }) {
         <table>
           <thead>
             <tr>
-              <th>Id</th>
+              <th>#</th>
               <th>Asset</th>
               <th>Employee</th>
               <th>Issue</th>
@@ -125,8 +131,12 @@ export default function IncidentList({ addNotification }) {
                   <td>{inc.createdDate}</td>
 
                   <td className="incident-actions">
-                    <FaEye />
+                    {/* ✅ VIEW */}
+                    <FaEye onClick={() => handleView(inc)} />
+
                     <FaEdit />
+
+                    {/* DELETE */}
                     <FaTrash onClick={() => handleDeleteClick(index)} />
                   </td>
                 </tr>
@@ -136,7 +146,28 @@ export default function IncidentList({ addNotification }) {
         </table>
       </div>
 
-      {/* 🔥 LOCAL NOTIFICATION PANEL */}
+      {/* 🔥 VIEW POPUP */}
+      {selectedIncident && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h3>Incident Details</h3>
+
+            <p><b>Asset:</b> {selectedIncident.assetName}</p>
+            <p><b>Employee:</b> {selectedIncident.employeeName}</p>
+            <p><b>Issue:</b> {selectedIncident.issue}</p>
+            <p><b>Status:</b> {selectedIncident.status}</p>
+            <p><b>Date:</b> {selectedIncident.createdDate}</p>
+
+            <div className="popup-buttons">
+              <button onClick={() => setSelectedIncident(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🔔 NOTIFICATION PANEL */}
       {showPanel && (
         <>
           <div

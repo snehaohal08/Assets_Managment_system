@@ -15,14 +15,17 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [assets, setAssets] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/assets")
-      .then((res) => setAssets(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+useEffect(() => {
+  axios
+    .get("http://localhost:5000/api/assets-db")   // ✅ FIXED
+    .then((res) => setAssets(res.data))
+    .catch((err) => console.log(err));
+}, []);
 
-  const totalAssets = assets.reduce((sum, asset) => sum + asset.quantity, 0);
+  // ✅ TOTAL = number of rows
+const totalAssets = assets?.length || 0;
+// console.log("Assets Data:", assets);
+
   const assignedAssets = 0;
   const availableAssets = totalAssets - assignedAssets;
 
@@ -41,14 +44,12 @@ export default function AdminDashboard() {
   return (
     <div className="dashboard-container">
 
-      {/* SIDEBAR */}
       <Sidebar
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
       />
 
-      {/* MAIN CONTENT */}
       <div className="main-content">
         <Header toggleSidebar={toggleSidebar} />
 
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
 
         {activePage === "Dashboard" && (
           <div className="dashboard-body">
+
             <div className="stats-column">
               {stats.map((item, index) => (
                 <div className="stat-card" key={index}>
@@ -84,6 +86,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+
           </div>
         )}
 

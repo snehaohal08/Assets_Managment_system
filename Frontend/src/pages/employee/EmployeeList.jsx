@@ -5,7 +5,8 @@ import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 export default function EmployeeList({
   employees,
   setEmployees,
-  setShowForm
+  setShowForm,
+  assignedAssets = []   // 👈 IMPORTANT
 }) {
   const [search, setSearch] = useState("");
   const [editIndex, setEditIndex] = useState(null);
@@ -16,7 +17,16 @@ export default function EmployeeList({
   const [showViewPopup, setShowViewPopup] = useState(false);
   const [viewData, setViewData] = useState(null);
 
+  // Normalize
   const normalize = (str) => (str || "").trim().toLowerCase();
+
+  // 🔥 GET ASSET COUNT PER EMPLOYEE
+  const getAssetCount = (empName) => {
+    return assignedAssets.filter(
+      (asset) =>
+        normalize(asset.assigned_to) === normalize(empName)
+    ).length;
+  };
 
   // DELETE
   const confirmDelete = () => {
@@ -39,6 +49,7 @@ export default function EmployeeList({
     setShowViewPopup(true);
   };
 
+  // SEARCH FILTER
   const filteredEmployees = employees.filter((emp) =>
     `${emp.firstName} ${emp.lastName} ${emp.id}`
       .toLowerCase()
@@ -59,6 +70,7 @@ export default function EmployeeList({
               <th>Department</th>
               <th>Email</th>
               <th>Contact</th>
+              <th>Assets Assigned</th> {/* 👈 NEW COLUMN */}
               <th>Action</th>
             </tr>
           </thead>
@@ -66,7 +78,7 @@ export default function EmployeeList({
           <tbody>
             {filteredEmployees.length === 0 ? (
               <tr>
-                <td colSpan="7">No Data</td>
+                <td colSpan="8">No Data</td>
               </tr>
             ) : (
               filteredEmployees.map((emp, index) => (
@@ -80,8 +92,14 @@ export default function EmployeeList({
 
                   <td>{emp.assetsCategory}</td>
                   <td>{emp.department}</td>
+
                   <td>{emp.email}</td>
                   <td>{emp.contact}</td>
+
+                  {/* 🔥 ASSET COUNT DISPLAY */}
+                  <td>
+                    {getAssetCount(`${emp.firstName} ${emp.lastName}`)}
+                  </td>
 
                   <td className="actions">
                     <FaEye onClick={() => handleView(emp)} />

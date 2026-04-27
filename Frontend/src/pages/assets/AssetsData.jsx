@@ -5,29 +5,21 @@ import "./AssetsData.css";
 
 export default function AssetsData() {
   const [assets, setAssets] = useState([]);
-  const [activeTab, setActiveTab] = useState("Assets"); // ✅ Local tab state
+  const [activeTab, setActiveTab] = useState("Assets");
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets")
-      .then((res) => setAssets(res.data))
+      .then((res) => {
+        console.log("DATA:", res.data);
+        setAssets(res.data);
+      })
       .catch((err) => console.log(err));
   }, []);
 
-  // 🔥 GROUP + COUNT LOGIC
-  const groupedAssets = {};
-  assets.forEach((asset) => {
-    if (!groupedAssets[asset.name]) {
-      groupedAssets[asset.name] = { ...asset, count: 1 };
-    } else {
-      groupedAssets[asset.name].count += 1;
-    }
-  });
-  const uniqueAssets = Object.values(groupedAssets);
-
   return (
     <div className="assets-page">
-      {/* 🔹 Mini Tabs */}
+
       <div className="assets-tabs">
         <button
           className={activeTab === "Assets" ? "active-tab" : ""}
@@ -35,6 +27,7 @@ export default function AssetsData() {
         >
           Assets
         </button>
+
         <button
           className={activeTab === "Form" ? "active-tab" : ""}
           onClick={() => setActiveTab("Form")}
@@ -43,18 +36,24 @@ export default function AssetsData() {
         </button>
       </div>
 
-      {/* 🔹 Tab Content */}
       {activeTab === "Assets" && (
         <div className="assets-grid">
-          {uniqueAssets.map((asset) => (
-            <div key={asset.name} className="asset-card">
-              <div className="asset-image">
-                <img src={asset.image} alt={asset.name} />
+          {assets.length === 0 ? (
+            <p>No Data Found</p>
+          ) : (
+            assets.map((asset) => (
+              <div key={asset.id} className="asset-card">
+
+                <div className="asset-image">
+                  <img src={asset.image} alt={asset.name} />
+                </div>
+
+                <h3>{asset.name}</h3>
+                {/* <p>Total: {asset.quantity}</p> */}
+
               </div>
-              <h3>{asset.name}</h3>
-              <p className="count">Total: {asset.quantity}</p>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       )}
 
