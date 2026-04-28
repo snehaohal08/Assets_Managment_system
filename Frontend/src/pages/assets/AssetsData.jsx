@@ -11,7 +11,7 @@ export default function AssetsData() {
     axios
       .get("http://localhost:5000/api/assets")
       .then((res) => {
-        console.log("DATA:", res.data);
+        // console.log("DATA:", res.data);
         setAssets(res.data);
       })
       .catch((err) => console.log(err));

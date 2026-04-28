@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AssetsAllocation.css";
 import AsstesAllocationTable from "./AsstesAllocationTable";
 import { FaSearch } from "react-icons/fa";
+import axios from "axios";
+
 export default function AssetsAllocation() {
-  // ✅ Default → Table open
+  // Tabs
   const [activeTab, setActiveTab] = useState("AssetsAllocationTable");
 
-  // ✅ Search + Sort state
+  // Search
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("");
 
+  // Form data
   const [formData, setFormData] = useState({
-    srNo: "",
-    assetName: "",
+    employeeId: "", // 👈 ADD THIS
     assetId: "",
     assignTo: "",
     status: "",
@@ -21,8 +22,10 @@ export default function AssetsAllocation() {
     warranty: "",
   });
 
+  // Table data (from DB)
   const [assetsList, setAssetsList] = useState([]);
 
+  // 🔥 INPUT CHANGE
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -30,18 +33,43 @@ export default function AssetsAllocation() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // 🔥 FETCH DATA FROM DB
+  const fetchData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/allocations");
+      setAssetsList(res.data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
 
-    setAssetsList([...assetsList, formData]);
+  // 🔥 LOAD DATA ON PAGE LOAD
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    alert("Asset Assigned Successfully!");
+  // 🔥 SUBMIT (SAVE TO DB)
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    await axios.post("http://localhost:5000/api/allocations/assign", {
+      employeeId: formData.employeeId,
+      assetId: formData.assetId,
+      status: formData.status,
+      condition: formData.condition,
+      age: formData.age,
+      warranty: formData.warranty,
+    });
+
+    alert("Asset Assigned Successfully ✅");
+
+    await fetchData(); // 🔥 IMPORTANT (wait for refresh)
 
     setActiveTab("AssetsAllocationTable");
 
     setFormData({
-      srNo: "",
-      assetName: "",
+      employeeId: "",
       assetId: "",
       assignTo: "",
       status: "",
@@ -49,31 +77,25 @@ export default function AssetsAllocation() {
       age: "",
       warranty: "",
     });
-  };
 
-  // ✅ Filter + Sort logic
-  const filteredData = assetsList
-    .filter(
-      (item) =>
-        item.assetName.toLowerCase().includes(search.toLowerCase()) ||
-        item.assetId.toLowerCase().includes(search.toLowerCase()) ||
-        item.assignTo.toLowerCase().includes(search.toLowerCase()),
-    )
-    .sort((a, b) => {
-      if (sort === "name") {
-        return a.assetName.localeCompare(b.assetName);
-      }
-      if (sort === "status") {
-        return a.status.localeCompare(b.status);
-      }
-      return 0;
-    });
+  } catch (err) {
+    console.error(err);
+    alert("Error assigning asset ❌");
+  }
+};
+
+  // 🔥 SAFE FILTER
+  const filteredData = assetsList.filter(
+    (item) =>
+      (item.assetName || "").toLowerCase().includes(search.toLowerCase()) ||
+      (item.assetId || "").toLowerCase().includes(search.toLowerCase()) ||
+      (item.assignTo || "").toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <div>
       {/* 🔹 TOP BAR */}
       <div className="top-bar">
-        {/* LEFT → Tabs */}
         <div className="assets-tabs">
           <button
             className={
@@ -92,14 +114,14 @@ export default function AssetsAllocation() {
           </button>
         </div>
 
-        {/* RIGHT → Search + Sort */}
+        {/* 🔍 SEARCH */}
         {activeTab === "AssetsAllocationTable" && (
           <div className="search-sort">
             <div className="search-box">
-              <FaSearch className="search-icon" />
+              <FaSearch />
               <input
                 type="text"
-                placeholder="Search "
+                placeholder="Search"
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
@@ -107,37 +129,24 @@ export default function AssetsAllocation() {
         )}
       </div>
 
-      {/* 🔹 MAIN CONTAINER */}
+      {/* 🔹 MAIN */}
       <div className="allocation-container">
         {/* ✅ FORM */}
         {activeTab === "AssetsAllocation" && (
           <form onSubmit={handleSubmit} className="form-grid">
             <div className="form-group">
-              <label>SR No *</label>
+              <label>Employee ID *</label>
               <input
-                type="number"
-                name="srNo"
-                value={formData.srNo}
+                name="employeeId"
+                value={formData.employeeId || ""}
                 onChange={handleChange}
+                placeholder="Enter Employee ID"
                 required
               />
             </div>
-
-            <div className="form-group">
-              <label>Asset Name *</label>
-              <input
-                type="text"
-                name="assetName"
-                value={formData.assetName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
             <div className="form-group">
               <label>Asset ID *</label>
               <input
-                type="text"
                 name="assetId"
                 value={formData.assetId}
                 onChange={handleChange}
@@ -146,12 +155,12 @@ export default function AssetsAllocation() {
             </div>
 
             <div className="form-group">
-              <label>Assigned To *</label>
+              <label>Assigned To (Full Name) *</label>
               <input
-                type="text"
                 name="assignTo"
                 value={formData.assignTo}
                 onChange={handleChange}
+                placeholder="Sneha Ohal"
                 required
               />
             </div>
@@ -184,11 +193,7 @@ export default function AssetsAllocation() {
 
             <div className="form-group">
               <label>Age</label>
-              <input
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-              />
+              <input name="age" value={formData.age} onChange={handleChange} />
             </div>
 
             <div className="form-group">

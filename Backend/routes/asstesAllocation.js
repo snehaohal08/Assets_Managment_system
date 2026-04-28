@@ -1,51 +1,55 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../config/db");
 
-const allocations = [
-  {
-    id: 1,
-    assetName: "Laptop",
-    assignedTo: "Sneha",
-    assignedDate: "2026-03-31",
-    status: "Assigned",
-    expiry: "2027-03-31",
-    condition:"Needs Repair",
-    Age:"2.2yr"
-  },
-  {
-    id: 2,
-    assetName: "Router",
-    assignedTo: "Mosin",
-    assignedDate: "",
-    status: "Available",
-    expiry: "",
-    condition:"Needs Repair",
-    Age:"1.1yr"
-  },
-  {
-    id: 3,
-    assetName: "Printer",
-    assignedTo: "Rahul",
-    assignedDate: "2026-03-20",
-    status: "Assigned",
-    expiry: "2026-04-01", // will become Expired
-    condition:"Needs Repair",
-    Age:"2.1yr"
-  },
-  {
-    id: 4,
-    assetName: "Keyboard",
-    assignedTo: "Amit",
-    assignedDate: "2026-03-25",
-    status: "rpaired",
-    expiry: "2026-05-01",
-    condition:"Good",
-    Age:"2.1yr"
-  }
-];
 
+/* ================= ASSIGN ================= */
+router.post("/assign", (req, res) => {
+  const { employeeId, assetId, status, condition, age, warranty } = req.body;
+
+  const query = `
+    INSERT INTO asset_allocation 
+    (employee_id, asset_id, status, condition_status, age, warranty)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    query,
+    [employeeId, assetId, status, condition, age, warranty],
+    (err, result) => {
+      if (err) return res.status(500).send(err);
+
+      res.json({ message: "Asset Assigned ✅" });
+    }
+  );
+});
+
+/* ================= GET DATA (JOIN) ================= */
+// GET DATA (JOIN FIXED)
 router.get("/", (req, res) => {
-  res.json(allocations);
+  const query = `
+    SELECT 
+      a.id,
+      a.employee_id,   -- 🔥 ADD THIS LINE
+      e.firstName,
+      e.lastName,
+      e.empCode,
+      ast.assetName,
+      ast.assetId,
+      a.status,
+      a.condition_status,
+      a.age,
+      a.warranty
+    FROM asset_allocation a
+    JOIN employees e ON a.employee_id = e.empCode
+    JOIN assets ast ON a.asset_id = ast.assetId
+    ORDER BY a.id DESC
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) return res.status(500).send(err);
+    res.json(result);
+  });
 });
 
 module.exports = router;

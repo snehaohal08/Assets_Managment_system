@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import "./EmployeeList.css";
+import axios from "axios";
 
 import popup from "../../assets/images/png/popup.png";
 import cross from "../../assets/images/png/cross.png";
 
-export default function EmployeeForm({ addEmployee, goBack }) {
+export default function EmployeeForm({ goBack }) {
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
     lastName: "",
-    id: "",
-    brandModel: "",
-    assetsCategory: "",
+    id: "", // 👈 this is empCode (EM101)
     email: "",
     contact: "",
     department: "",
@@ -22,7 +21,7 @@ export default function EmployeeForm({ addEmployee, goBack }) {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("");
 
-  // ✅ COMMON INPUT HANDLER
+  // ✅ INPUT HANDLER
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -36,14 +35,10 @@ export default function EmployeeForm({ addEmployee, goBack }) {
     }
   };
 
-  // ✅ CONTACT INPUT HANDLER (FIXED)
+  // ✅ CONTACT FIX
   const handleContactChange = (e) => {
-    let value = e.target.value;
+    let value = e.target.value.replace(/[^0-9]/g, "");
 
-    // allow only numbers
-    value = value.replace(/[^0-9]/g, "");
-
-    // max 10 digits
     if (value.length > 10) return;
 
     setFormData((prev) => ({
@@ -67,13 +62,7 @@ export default function EmployeeForm({ addEmployee, goBack }) {
       newErrors.lastName = "Last name is required";
 
     if (!formData.id.trim())
-      newErrors.id = "Employee ID is required";
-
-    if (!formData.brandModel.trim())
-      newErrors.brandModel = "Brand & Model is required";
-
-    if (!formData.assetsCategory.trim())
-      newErrors.assetsCategory = "Category is required";
+      newErrors.id = "Employee Code is required (EM101)";
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
@@ -97,27 +86,40 @@ export default function EmployeeForm({ addEmployee, goBack }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ SUBMIT
-  const handleSubmit = (e) => {
+  // ✅ SUBMIT → BACKEND API
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validate()) {
-      addEmployee(formData);
+    if (!validate()) {
+      setAlertMsg("Please fill all required fields!");
+      setAlertType("error");
+      return;
+    }
 
-      setAlertMsg("Employee Added Successfully!");
+    try {
+      await axios.post("http://localhost:5000/api/employees/add", {
+        empCode: formData.id, // 👈 EM101
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        email: formData.email,
+        contact: formData.contact,
+        department: formData.department,
+        dateOfJoining: formData.dateOfJoining,
+      });
+
+      setAlertMsg("Employee Added Successfully ✅");
       setAlertType("success");
 
       setTimeout(() => {
         setAlertMsg("");
         goBack();
       }, 1500);
-    } else {
-      setAlertMsg("Please fill all required fields!");
-      setAlertType("error");
 
-      setTimeout(() => {
-        setAlertMsg("");
-      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setAlertMsg("Error saving employee ❌");
+      setAlertType("error");
     }
   };
 
@@ -130,82 +132,38 @@ export default function EmployeeForm({ addEmployee, goBack }) {
         {/* FIRST NAME */}
         <div className="form-group">
           <label>First Name *</label>
-          <input
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-          />
+          <input name="firstName" value={formData.firstName} onChange={handleChange} />
           {errors.firstName && <p className="error">{errors.firstName}</p>}
         </div>
 
         {/* MIDDLE NAME */}
         <div className="form-group">
           <label>Middle Name</label>
-          <input
-            name="middleName"
-            value={formData.middleName}
-            onChange={handleChange}
-          />
+          <input name="middleName" value={formData.middleName} onChange={handleChange} />
         </div>
 
         {/* LAST NAME */}
         <div className="form-group">
           <label>Last Name *</label>
-          <input
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-          />
+          <input name="lastName" value={formData.lastName} onChange={handleChange} />
           {errors.lastName && <p className="error">{errors.lastName}</p>}
         </div>
 
-        {/* EMPLOYEE ID */}
+        {/* EMPLOYEE CODE */}
         <div className="form-group">
-          <label>Employee ID *</label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleChange}
-          />
+          <label>Employee Code *</label>
+          <input name="id" value={formData.id} onChange={handleChange} placeholder="EM101" />
           {errors.id && <p className="error">{errors.id}</p>}
-        </div>
-
-        {/* BRAND */}
-        <div className="form-group">
-          <label>Brand & Model *</label>
-          <input
-            name="brandModel"
-            value={formData.brandModel}
-            onChange={handleChange}
-          />
-          {errors.brandModel && <p className="error">{errors.brandModel}</p>}
-        </div>
-
-        {/* CATEGORY */}
-        <div className="form-group">
-          <label>Assets Category *</label>
-          <input
-            name="assetsCategory"
-            value={formData.assetsCategory}
-            onChange={handleChange}
-          />
-          {errors.assetsCategory && (
-            <p className="error">{errors.assetsCategory}</p>
-          )}
         </div>
 
         {/* EMAIL */}
         <div className="form-group">
           <label>Email *</label>
-          <input
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+          <input name="email" value={formData.email} onChange={handleChange} />
           {errors.email && <p className="error">{errors.email}</p>}
         </div>
 
-        {/* 🔥 CONTACT FIXED */}
+        {/* CONTACT */}
         <div className="form-group">
           <label>Contact *</label>
           <input
@@ -221,26 +179,15 @@ export default function EmployeeForm({ addEmployee, goBack }) {
         {/* DEPARTMENT */}
         <div className="form-group">
           <label>Department *</label>
-          <input
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-          />
+          <input name="department" value={formData.department} onChange={handleChange} />
           {errors.department && <p className="error">{errors.department}</p>}
         </div>
 
         {/* DATE */}
         <div className="form-group">
           <label>Date of Joining *</label>
-          <input
-            type="date"
-            name="dateOfJoining"
-            value={formData.dateOfJoining}
-            onChange={handleChange}
-          />
-          {errors.dateOfJoining && (
-            <p className="error">{errors.dateOfJoining}</p>
-          )}
+          <input type="date" name="dateOfJoining" value={formData.dateOfJoining} onChange={handleChange} />
+          {errors.dateOfJoining && <p className="error">{errors.dateOfJoining}</p>}
         </div>
 
         {/* BUTTONS */}

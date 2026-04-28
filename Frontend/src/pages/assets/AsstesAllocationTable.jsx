@@ -1,5 +1,6 @@
 import React from "react";
 import "./AssetsAllocation.css";
+
 export default function AsstesAllocationTable({ data }) {
   return (
     <div className="table-container">
@@ -20,23 +21,20 @@ export default function AsstesAllocationTable({ data }) {
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td colSpan="8">No Data Found</td>
+              <td colSpan="8">No Data</td>
             </tr>
           ) : (
             data.map((item, index) => (
               <tr key={index}>
-                <td>{item.srNo}</td>
+                <td>{item.empCode}</td>
                 <td>{item.assetName}</td>
                 <td>{item.assetId}</td>
-                <td>{item.assignTo}</td>
-                <td>
-                  <span
-                    className={`status ${item.status === "Available" ? "available" : "assigned"}`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-                <td>{item.condition}</td>
+
+                {/* ✅ FIXED */}
+                <td>{item.firstName} {item.lastName}</td>
+
+                <td>{item.status}</td>
+                <td>{item.condition_status}</td>
                 <td>{item.age}</td>
                 <td>{item.warranty}</td>
               </tr>

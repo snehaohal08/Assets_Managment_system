@@ -15,21 +15,43 @@ import "./AdminDashboard.css";
 import "../components/sidebar.css";
 
 export default function EmployeeDashboard() {
+
   const [activePage, setActivePage] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [assets, setAssets] = useState([]);
+
   const [search, setSearch] = useState("");
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
-  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+  // 🔥 SAFE STATS
+  const [stats, setStats] = useState({
+    totalAssets: 0,
+    assignedAssets: 0,
+    availableAssets: 0,
+    underRepair: 0,
+    Incidents: 0,
+  });
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const showHeaderActions =
     activePage === "Dashboard" || activePage === "Employee List";
 
-  // ================= EMPLOYEE NOTIFICATION =================
+  // ================= API =================
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/assets-stats")
+      .then((res) => {
+        console.log("STATS:", res.data);
+        setStats(res.data);
+      })
+      .catch((err) => console.log("API ERROR:", err));
+  }, []);
+
+  // ================= EMPLOYEE =================
   const addEmployee = (data) => {
     setEmployees((prev) => [...prev, data]);
     setShowForm(false);
@@ -45,7 +67,6 @@ export default function EmployeeDashboard() {
     ]);
   };
 
-  // ================= INCIDENT NOTIFICATION =================
   const addIncidentNotification = (data) => {
     setNotifications((prev) => [
       {
@@ -62,22 +83,6 @@ export default function EmployeeDashboard() {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-useEffect(() => {
-  axios
-    .get("http://localhost:5000/api/assets-db")   // ✅ FIXED
-    .then((res) => setAssets(res.data))
-    .catch((err) => console.log(err));
-}, []);
-  const totalAssets = assets?.length || 0;
-// console.log("Assets Data:", assets);
-  const stats = [
-    { label: "Total Asset", value: totalAssets },
-    { label: "Assets Assigned", value: 0 },
-    { label: "Assets Available", value: totalAssets },
-    { label: "Assets Under Repair", value: 0 },
-    { label: "Assets Due for Replacement", value: 0 },
-  ];
-
   if (showForm) {
     return (
       <EmployeeForm
@@ -87,10 +92,19 @@ useEffect(() => {
     );
   }
 
+  // ================= SAFE CARDS =================
+  const statsCards = [
+    { label: "Total Asset", value: stats.totalAssets || 0 },
+    { label: "Assets Assigned", value: stats.assignedAssets || 0 },
+    { label: "Assets Available", value: stats.availableAssets || 0 },
+    { label: "Assets Under Repair", value: stats.underRepair || 0 },
+    { label: "Incidents", value: stats.Incidents || 0 }
+
+  ];
+
   return (
     <div className="dashboard-container">
 
-      {/* ================= SIDEBAR ================= */}
       <SideBar_emp
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
@@ -101,119 +115,39 @@ useEffect(() => {
         <div className="sidebar-backdrop" onClick={toggleSidebar}></div>
       )}
 
-      {/* ================= MAIN CONTENT ================= */}
       <div className="main-content">
 
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
         <div className="header">
-
-          {/* LEFT SIDE */}
           <div className="left-header">
             <FaBars className="toggle-icon" onClick={toggleSidebar} />
-
-            <h2>
-              {activePage === "Dashboard"
-                ? "Employee Dashboard"
-                : activePage}
-            </h2>
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="header-right">
-
-            <div className="search-box">
-              <FaSearch />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search"
-              />
-            </div>
-
-            {showHeaderActions && (
-              <>
-                <button
-                  className="add-btn"
-                  onClick={() => setShowForm(true)}
-                >
-                  Add Employee
-                </button>
-
-                <div
-                  className="bell-container"
-                  onClick={() => setShowNotifications(true)}
-                >
-                  <FaBell />
-                  {notifications.length > 0 && (
-                    <span className="bell-badge">
-                      {notifications.length}
-                    </span>
-                  )}
-                </div>
-              </>
-            )}
+            <h2>{activePage}</h2>
           </div>
         </div>
 
-        {/* ================= NOTIFICATION PANEL ================= */}
-        {showNotifications && (
-          <>
-            <div
-              className="notification-overlay"
-              onClick={() => setShowNotifications(false)}
-            ></div>
-
-            <div className="notification-panel">
-              <div className="panel-header">
-                <h3>Notifications</h3>
-                <span onClick={() => setShowNotifications(false)}>✖</span>
-              </div>
-
-              <div className="panel-body">
-                {notifications.length === 0 ? (
-                  <p>No Notifications</p>
-                ) : (
-                  notifications.map((n) => (
-                    <div
-                      key={n.id}
-                      className="notification-card"
-                      onClick={() => removeNotification(n.id)}
-                    >
-                      <div className="left-line"></div>
-
-                      <div className="notification-content">
-                        <h4>{n.title}</h4>
-                        <p>{n.problem}</p>
-                      </div>
-
-                      <span className="time">{n.time}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ================= DASHBOARD ================= */}
+        {/* DASHBOARD */}
         {activePage === "Dashboard" && (
           <div className="dashboard-body">
 
+            {/* LEFT STATS */}
             <div className="stats-column">
-              {stats.map((s, i) => (
+              {statsCards.map((s, i) => (
                 <div className="stat-card" key={i}>
-                  <span className="stat-label">{s.label}</span>
-                  <span className="stat-value">{s.value}</span>
+                  <span>{s.label}</span>
+                  <h3>{s.value}</h3>
                 </div>
               ))}
             </div>
 
+            {/* RIGHT */}
             <div className="right-section">
+
               <div className="chart-wrapper">
                 <AssetsBarChart />
               </div>
 
               <div className="bottom-grid">
+
                 <div className="pie-card">
                   <DonutChart />
                 </div>
@@ -222,27 +156,31 @@ useEffect(() => {
                   <table>
                     <tbody>
                       <tr>
-                        <td>AS4568</td>
-                        <td>Techfix</td>
-                        <td>In Progress</td>
+                        <td>Assigned</td>
+                        <td>{stats.assignedAssets}</td>
+                      </tr>
+                      <tr>
+                        <td>Available</td>
+                        <td>{stats.availableAssets}</td>
+                      </tr>
+                      <tr>
+                        <td>Repair</td>
+                        <td>{stats.underRepair}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+
               </div>
+
             </div>
 
           </div>
         )}
 
-        {activePage === "Assets" && (
-          <AssetsData setActivePage={setActivePage} />
-        )}
-
-        {activePage === "Assets Allocation" && (
-          <AssetsAllocation />
-        )}
-
+        {/* OTHER PAGES */}
+        {activePage === "Assets" && <AssetsData />}
+        {activePage === "Assets Allocation" && <AssetsAllocation />}
         {activePage === "Employee List" && (
           <EmployeeList
             employees={employees}
@@ -250,7 +188,6 @@ useEffect(() => {
             setShowForm={setShowForm}
           />
         )}
-
         {activePage === "Incident Log" && (
           <IncidentList addNotification={addIncidentNotification} />
         )}
