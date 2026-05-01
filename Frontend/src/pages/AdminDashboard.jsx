@@ -5,6 +5,8 @@ import AssetsBarChart from "../components/AssetsBarChart";
 import DonutChart from "../components/DonutChart";
 import axios from "axios";
 import "./AdminDashboard.css";
+import AssetsData from "./assets/AssetsData";
+import AssetsAllocation from "./assets/AssetsAllocation";
 
 export default function AdminDashboard() {
 
@@ -106,6 +108,9 @@ export default function AdminDashboard() {
 
           </div>
         )}
+         {activePage === "Assets" && <AssetsData/>}
+         {activePage === "Assets Allocation" && <AssetsAllocation/>}
+      
       </div>
     </div>
   );

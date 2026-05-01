@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import logo from "../assets/images/icons/logo.png";
 import {
   FaTachometerAlt,
@@ -11,14 +11,12 @@ import {
 
 import "./sidebar.css";
 
-export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
-  const [active, setActive] = useState("Dashboard");
+export default function Sidebar({ setActivePage, activePage, isOpen, toggleSidebar }) {
 
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt /> },
     { name: "Assets", icon: <FaLaptop /> },
     { name: "Assets Allocation", icon: <FaUsers /> },
-    { name: "Assignees", icon: <FaUsers /> },
     { name: "Incident Log", icon: <FaTools /> },
   ];
 
@@ -28,16 +26,13 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
   ];
 
   const handleClick = (name) => {
-    setActive(name);
     setActivePage(name);
 
-    // close sidebar on mobile
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
   };
 
-  // 🔥 lock body scroll when sidebar open
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("sidebar-open");
@@ -48,26 +43,23 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
 
   return (
     <>
-      {/* Overlay */}
       {isOpen && <div className="overlay" onClick={toggleSidebar}></div>}
 
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
 
-        {/* LOGO */}
         <div className="sidebar-logo">
           <div className="logo-circle">
             <img src={logo} alt="Logo" />
           </div>
         </div>
 
-        {/* MENU */}
         <div className="sidebar-section">
           <p className="section-title">Menu</p>
 
           {menuItems.map((item) => (
             <div
               key={item.name}
-              className={`menu-item ${active === item.name ? "active" : ""}`}
+              className={`menu-item ${activePage === item.name ? "active" : ""}`}
               onClick={() => handleClick(item.name)}
             >
               {item.icon}
@@ -76,14 +68,13 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
           ))}
         </div>
 
-        {/* GENERAL */}
         <div className="sidebar-section">
           <p className="section-title">General</p>
 
           {generalItems.map((item) => (
             <div
               key={item.name}
-              className={`menu-item ${active === item.name ? "active" : ""}`}
+              className={`menu-item ${activePage === item.name ? "active" : ""}`}
               onClick={() => handleClick(item.name)}
             >
               {item.icon}
@@ -92,7 +83,6 @@ export default function Sidebar({ setActivePage, isOpen, toggleSidebar }) {
           ))}
         </div>
 
-        {/* PROFILE */}
         <div className="sidebar-profile">
           <div className="profile-avatar">S</div>
           <div className="profile-text">
