@@ -1,34 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaBell, FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 import axios from "axios";
 
-import AssetsBarChart from "../components/AssetsBarChart";
-import DonutChart from "../components/DonutChart";
-import AssetsData from "./assets/AssetsData";
-import AssetsAllocation from "./assets/AssetsAllocation";
-import SideBar_emp from "../components/SideBar_emp";
-import EmployeeList from "./employee/EmployeeList";
+import AssetsBarChart from "../../components/AssetsBarChart";
+import DonutChart from "../../components/DonutChart";
 
-import EmployeeForm from "./employee/EmployeeForm";
+import "../AdminDashboard.css";
+import "../../components/sidebar.css";
 
-import "./AdminDashboard.css";
-import "../components/sidebar.css";
+import Sidebar_super from "../../components/Sidebar_super";
+import AssetsAllocation from "../assets/AssetsAllocation";
+import EmployeeList from "../employee/EmployeeList";
+import AssetsTable from "./AssetsTable";
+import Header from "../../components/Header";
+import IncidentList from "../employee/IncidentList";
 
-import EmployeeIncidentForm from "./employee/EmployeeIncidentForm";
+// import IncidentList from "../employee/IncidentList";
 
-export default function EmployeeDashboard() {
-
-  const [activePage, setActivePage] = useState("Dashboard");
+function SuperAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activePage, setActivePage] = useState("Dashboard");
 
-  const [search, setSearch] = useState("");
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
+  // ❌ REMOVE showForm (not needed here)
 
-  const [employees, setEmployees] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-
-  // 🔥 SAFE STATS
+  // ✅ STATS
   const [stats, setStats] = useState({
     totalAssets: 0,
     assignedAssets: 0,
@@ -37,38 +32,20 @@ export default function EmployeeDashboard() {
     Incidents: 0,
   });
 
+  // ✅ FIX: notifications state (IF YOU WANT LATER)
+  const [notifications, setNotifications] = useState([]);
+
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const showHeaderActions =
-    activePage === "Dashboard" || activePage === "Employee List";
-
-  // ================= API =================
+  // API
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets-stats")
-      .then((res) => {
-        console.log("STATS:", res.data);
-        setStats(res.data);
-      })
-      .catch((err) => console.log("API ERROR:", err));
+      .then((res) => setStats(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
-  // ================= EMPLOYEE =================
-  const addEmployee = (data) => {
-    setEmployees((prev) => [...prev, data]);
-    setShowForm(false);
-
-    setNotifications((prev) => [
-      {
-        id: Date.now(),
-        title: "Employee Added",
-        problem: data?.name || "New Employee",
-        time: new Date().toLocaleTimeString(),
-      },
-      ...prev,
-    ]);
-  };
-
+  // ✅ OPTIONAL: if you want notifications (FIXED)
   const addIncidentNotification = (data) => {
     setNotifications((prev) => [
       {
@@ -81,33 +58,18 @@ export default function EmployeeDashboard() {
     ]);
   };
 
-  const removeNotification = (id) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
-  if (showForm) {
-    return (
-      <EmployeeForm
-        addEmployee={addEmployee}
-        goBack={() => setShowForm(false)}
-      />
-    );
-  }
-
-  // ================= SAFE CARDS =================
   const statsCards = [
     { label: "Total Asset", value: stats.totalAssets || 0 },
     { label: "Assets Assigned", value: stats.assignedAssets || 0 },
     { label: "Assets Available", value: stats.availableAssets || 0 },
     { label: "Assets Under Repair", value: stats.underRepair || 0 },
-    { label: "Incidents", value: stats.Incidents || 0 }
-
+    { label: "Incidents", value: stats.Incidents || 0 },
   ];
 
   return (
     <div className="dashboard-container">
 
-      <SideBar_emp
+      <Sidebar_super
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -119,7 +81,8 @@ export default function EmployeeDashboard() {
 
       <div className="main-content">
 
-        {/* HEADER */}
+        <Header toggleSidebar={toggleSidebar} />
+
         <div className="header">
           <div className="left-header">
             <FaBars className="toggle-icon" onClick={toggleSidebar} />
@@ -131,7 +94,6 @@ export default function EmployeeDashboard() {
         {activePage === "Dashboard" && (
           <div className="dashboard-body">
 
-            {/* LEFT STATS */}
             <div className="stats-column">
               {statsCards.map((s, i) => (
                 <div className="stat-card" key={i}>
@@ -141,7 +103,6 @@ export default function EmployeeDashboard() {
               ))}
             </div>
 
-            {/* RIGHT */}
             <div className="right-section">
 
               <div className="chart-wrapper">
@@ -181,20 +142,22 @@ export default function EmployeeDashboard() {
         )}
 
         {/* OTHER PAGES */}
-        {activePage === "Assets" && <AssetsData />}
+        {activePage === "Assets" && <AssetsTable />}
+
         {activePage === "Assets Allocation" && <AssetsAllocation />}
+
         {activePage === "Employee List" && (
-          <EmployeeList
-            employees={employees}
-            setEmployees={setEmployees}
-            setShowForm={setShowForm}
-          />
+          <EmployeeList setShowForm={() => {}} />
         )}
+
+        {/* ✅ INCIDENT PAGE (ONLY VIEW DATA) */}
 {activePage === "Incident Log" && (
-  <EmployeeIncidentForm goBack={() => setActivePage("Dashboard")} />
+  <IncidentList role="superadmin" />
 )}
 
       </div>
     </div>
   );
 }
+
+export default SuperAdmin;

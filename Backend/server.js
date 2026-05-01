@@ -17,6 +17,7 @@ app.use("/api/assets", require("./routes/assets"));
 app.use("/api/assets-db", require("./routes/assetsDb"));
 app.use("/api/allocations", require("./routes/asstesAllocation"));
 app.use("/api/employees", require("./routes/employees"));
+app.use("/api/incidents", require("./routes/incidents"));
 
 // ================= STATS API =================
 app.get("/api/assets-stats", (req, res) => {

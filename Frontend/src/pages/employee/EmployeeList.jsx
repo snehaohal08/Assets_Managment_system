@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./EmployeeList.css";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
+import EmployeeForm from "./EmployeeForm";
 
-export default function EmployeeList({ setShowForm }) {
+export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [assignedAssets, setAssignedAssets] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [showForm, setShowForm] = useState(false);
 
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -19,7 +22,6 @@ export default function EmployeeList({ setShowForm }) {
     fetchEmployees();
     fetchAssets();
 
-    // 🔥 AUTO REFRESH (NO UI CHANGE)
     const interval = setInterval(() => {
       fetchAssets();
     }, 2000);
@@ -45,19 +47,20 @@ export default function EmployeeList({ setShowForm }) {
     }
   };
 
-  // ================= COUNT FIX =================
+  // ================= ASSET COUNT =================
   const getAssetCount = (empCode) => {
     return assignedAssets.filter(
-      (asset) => String(asset.employee_id).trim() === String(empCode).trim(),
+      (a) => String(a.employee_id).trim() === String(empCode).trim()
     ).length;
   };
-  const getAssetNames = (empCode) => {
-    const assets = assignedAssets.filter(
-      (asset) => String(asset.employee_id) === String(empCode),
-    );
 
-    return assets.map((a) => a.assetName).join(", ");
+  const getAssetNames = (empCode) => {
+    return assignedAssets
+      .filter((a) => String(a.employee_id) === String(empCode))
+      .map((a) => a.assetName)
+      .join(", ");
   };
+
   // ================= DELETE =================
   const confirmDelete = async () => {
     try {
@@ -77,74 +80,89 @@ export default function EmployeeList({ setShowForm }) {
   const filteredEmployees = employees.filter((emp) =>
     `${emp.firstName} ${emp.lastName} ${emp.empCode}`
       .toLowerCase()
-      .includes(search.toLowerCase()),
+      .includes(search.toLowerCase())
   );
 
+  // ================= MAIN UI =================
   return (
     <div className="container">
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Sr No</th>
-              <th>Name & ID</th>
-              <th>Department</th>
-              <th>Email</th>
-              <th>Assets</th>
-              <th>Contact</th>
-              <th>Assets Assigned</th>
-              <th>Action</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {filteredEmployees.length === 0 ? (
+      {/* 🔥 ADD EMPLOYEE BUTTON */}
+      {!showForm && (
+        <div style={{ marginBottom: "15px" }}>
+          <button
+            className="add-employee-btn"
+            onClick={() => setShowForm(true)}
+          >
+            + Add Employee
+          </button>
+        </div>
+      )}
+
+      {/* 🔥 FORM OPEN */}
+      {showForm ? (
+        <EmployeeForm goBack={() => setShowForm(false)} />
+      ) : (
+        <div className="table-container">
+          <table>
+            <thead>
               <tr>
-                <td colSpan="7">No Data</td>
+                <th>Sr No</th>
+                <th>Name & ID</th>
+                <th>Department</th>
+                <th>Email</th>
+                <th>Assets</th>
+                <th>Contact</th>
+                <th>Assets Assigned</th>
+                <th>Action</th>
               </tr>
-            ) : (
-              filteredEmployees.map((emp, index) => (
-                <tr key={emp.id}>
-                  <td>{index + 1}</td>
+            </thead>
 
-                  <td>
-                    <b>
-                      {emp.firstName} {emp.lastName}
-                    </b>
-                    <div>{emp.empCode}</div>
-                  </td>
-
-                  <td>{emp.department}</td>
-                  <td>{emp.email}</td>
-                  <td>
-                    {/* {getAssetCount(emp.empCode)}   */}
-                    <div style={{ fontSize: "12px", color: "gray" }}>
-                      {getAssetNames(emp.empCode)}
-                    </div>
-                  </td>
-                  <td>{emp.contact}</td>
-
-                  {/* ✅ COUNT WORKING */}
-                  <td>{getAssetCount(emp.empCode)}</td>
-
-                  <td className="actions">
-                    <FaEye onClick={() => handleView(emp)} />
-                    <FaEdit onClick={() => setShowForm(true)} />
-                    <FaTrash
-                      onClick={() => {
-                        setDeleteId(emp.id);
-                        setShowDeletePopup(true);
-                      }}
-                    />
-                  </td>
+            <tbody>
+              {filteredEmployees.length === 0 ? (
+                <tr>
+                  <td colSpan="8">No Data</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                filteredEmployees.map((emp, index) => (
+                  <tr key={emp.id}>
+                    <td>{index + 1}</td>
 
-      {/* DELETE POPUP */}
+                    <td>
+                      <b>{emp.firstName} {emp.lastName}</b>
+                      <div>{emp.empCode}</div>
+                    </td>
+
+                    <td>{emp.department}</td>
+                    <td>{emp.email}</td>
+
+                    <td style={{ fontSize: "12px", color: "gray" }}>
+                      {getAssetNames(emp.empCode)}
+                    </td>
+
+                    <td>{emp.contact}</td>
+
+                    <td>{getAssetCount(emp.empCode)}</td>
+
+                    <td className="actions">
+                      <FaEye onClick={() => handleView(emp)} />
+                      <FaEdit onClick={() => setShowForm(true)} />
+                      <FaTrash
+                        onClick={() => {
+                          setDeleteId(emp.id);
+                          setShowDeletePopup(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* ================= DELETE POPUP ================= */}
       {showDeletePopup && (
         <div className="overlay">
           <div className="popup">
@@ -155,19 +173,18 @@ export default function EmployeeList({ setShowForm }) {
         </div>
       )}
 
-      {/* VIEW POPUP */}
+      {/* ================= VIEW POPUP ================= */}
       {showViewPopup && viewData && (
         <div className="overlay">
           <div className="popup">
             <h3>Employee Details</h3>
-            <p>
-              {viewData.firstName} {viewData.lastName}
-            </p>
+            <p>{viewData.firstName} {viewData.lastName}</p>
             <p>{viewData.empCode}</p>
             <button onClick={() => setShowViewPopup(false)}>Close</button>
           </div>
         </div>
       )}
+
     </div>
   );
 }

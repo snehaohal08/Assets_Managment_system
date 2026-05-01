@@ -25,27 +25,32 @@ export default function Login() {
         { email, password }
       );
 
-      console.log("RESPONSE:", response.data); // 🔍 DEBUG
+      console.log("RESPONSE:", response.data);
 
       const { token, role } = response.data;
 
-      // 🔴 safety check
+      // ❌ safety check
       if (!token || !role) {
-        setAlertMsg("Token या Role backend से नहीं आ रहा ❌");
+        setAlertMsg("Token ya Role backend se nahi aa raha ❌");
         setAlertType("error");
         return;
       }
 
-      // ✅ save in localStorage
+      // ✅ normalize role
+      const roleLower = role.toLowerCase();
+
+      // ✅ store
       localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
+      localStorage.setItem("role", roleLower);
 
       setAlertMsg(response.data.message || "Login Successful ✅");
       setAlertType("success");
 
-      // ✅ navigate after 1 sec
+      // ✅ navigation
       setTimeout(() => {
-        if (role === "admin") {
+        if (roleLower === "superadmin") {
+          navigate("/superadmin-dashboard");
+        } else if (roleLower === "admin") {
           navigate("/admin-dashboard");
         } else {
           navigate("/employee-dashboard");
@@ -60,10 +65,11 @@ export default function Login() {
       } else {
         setAlertMsg("Something went wrong!");
       }
+
       setAlertType("error");
     }
 
-    // alert auto hide
+    // auto hide alert
     setTimeout(() => {
       setAlertMsg("");
       setAlertType("");
@@ -74,16 +80,17 @@ export default function Login() {
     <div className="login-wrapper">
       <div className="login-container">
 
-        {/* LEFT SIDE */}
+        {/* LEFT */}
         <div className="login-left">
           <img src={loginImg} alt="Login" className="left-image" />
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT */}
         <div className="login-right">
           <h2>Welcome Back!</h2>
 
           <form onSubmit={handleLogin} autoComplete="off">
+
             {/* EMAIL */}
             <input
               type="email"
@@ -121,6 +128,7 @@ export default function Login() {
 
             {/* BUTTON */}
             <button type="submit">Sign In</button>
+
           </form>
 
           {/* ALERT */}

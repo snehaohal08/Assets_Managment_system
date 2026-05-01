@@ -327,3 +327,66 @@ tbody tr:hover {
     grid-column: span 1;
   }
 }
+.add-employee-btn {
+  background: #646cff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-employee-btn:hover {
+  background: #646cff;
+}
+
+.table-container {
+  margin-top: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+
+.popup {
+  background: white;
+  padding: 20px;
+  margin: 100px auto;
+  width: 300px;
+  border-radius: 10px;
+}
+/* ACTION ICONS */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actions svg {
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.actions svg:hover {
+  transform: scale(1.2);
+}
+
+/* ICON COLORS */
+.actions svg:nth-child(1) {
+  color: #3498db; /* view */
+}
+
+.actions svg:nth-child(2) {
+  color: #f39c12; /* edit */
+}
+
+.actions svg:nth-child(3) {
+  color: #e74c3c; /* delete */
+}

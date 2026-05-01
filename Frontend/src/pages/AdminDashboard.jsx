@@ -7,9 +7,10 @@ import axios from "axios";
 import "./AdminDashboard.css";
 import AssetsData from "./assets/AssetsData";
 import AssetsAllocation from "./assets/AssetsAllocation";
+import IncidentList from "./employee/IncidentList";
+
 
 export default function AdminDashboard() {
-
   const [activePage, setActivePage] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -30,6 +31,18 @@ export default function AdminDashboard() {
       .then((res) => setStats(res.data))
       .catch((err) => console.log(err));
   }, []);
+  
+  const addIncidentNotification = (data) => {
+    setNotifications((prev) => [
+      {
+        id: Date.now(),
+        title: `Incident: ${data.assetName}`,
+        problem: data.issue,
+        time: new Date().toLocaleTimeString(),
+      },
+      ...prev,
+    ]);
+  };
 
   /* ================= CARDS ================= */
   const cards = [
@@ -37,12 +50,11 @@ export default function AdminDashboard() {
     { label: "Assets Assigned", value: stats.assignedAssets },
     { label: "Assets Available", value: stats.availableAssets },
     { label: "Assets Under Repair", value: stats.underRepair },
-    { label: "Incidents", value: stats.Incidents || 0 }
+    { label: "Incidents", value: stats.Incidents || 0 },
   ];
 
   return (
     <div className="dashboard-container">
-
       <Sidebar
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
@@ -55,7 +67,6 @@ export default function AdminDashboard() {
         {/* ================= DASHBOARD ================= */}
         {activePage === "Dashboard" && (
           <div className="dashboard-body">
-
             {/* LEFT CARDS */}
             <div className="stats-column">
               {cards.map((item, i) => (
@@ -68,7 +79,6 @@ export default function AdminDashboard() {
 
             {/* RIGHT SIDE */}
             <div className="right-section">
-
               {/* BAR CHART */}
               <div className="chart-wrapper">
                 <h3>Assets Overview</h3>
@@ -101,16 +111,15 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
-
               </div>
-
             </div>
-
           </div>
         )}
-         {activePage === "Assets" && <AssetsData/>}
-         {activePage === "Assets Allocation" && <AssetsAllocation/>}
-      
+        {activePage === "Assets" && <AssetsData />}
+        {activePage === "Assets Allocation" && <AssetsAllocation />}
+{activePage === "Incident Log" && (
+  <IncidentList role="admin" />
+)}
       </div>
     </div>
   );

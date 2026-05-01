@@ -108,5 +108,17 @@ router.delete("/:id", (req, res) => {
     res.json({ message: "Asset Deleted 🗑️" });
   });
 });
+router.get("/assets-stats", (req, res) => {
+  db.query(`
+    SELECT 
+      COUNT(*) AS totalAssets,
+      SUM(CASE WHEN status='assigned' THEN 1 ELSE 0 END) AS assignedAssets,
+      SUM(CASE WHEN status='available' THEN 1 ELSE 0 END) AS availableAssets,
+      SUM(CASE WHEN status='repair' THEN 1 ELSE 0 END) AS underRepair
+    FROM assets
+  `, (err, result) => {
+    res.json(result[0]);
+  });
+});
 
 module.exports = router;

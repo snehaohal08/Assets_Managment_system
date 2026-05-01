@@ -488,7 +488,7 @@
 }
 .table-container {
   margin-top: 25px;
-  max-height: 400px;
+  max-height: 340px;
   overflow-y: auto;
   overflow-x: auto;
   border-radius: 10px;
