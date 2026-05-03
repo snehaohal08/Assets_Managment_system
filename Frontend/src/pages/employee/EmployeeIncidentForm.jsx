@@ -48,72 +48,101 @@ export default function EmployeeIncidentForm({ goBack }) {
       <h2 className="title">Incident Report </h2>
 
       <form onSubmit={handleSubmit} className="incident-form">
-
         {/* ROW 1 */}
         <div className="row">
           <div className="field">
-            <input placeholder="Asset ID"
+            <input
+              placeholder="Asset ID"
               value={form.assetId}
-              onChange={(e) => setForm({ ...form, assetId: e.target.value })} />
+              onChange={(e) => setForm({ ...form, assetId: e.target.value })}
+            />
             {errors.assetId && <span className="error">{errors.assetId}</span>}
           </div>
 
           <div className="field">
-            <input placeholder="Employee ID"
+            <input
+              placeholder="Employee ID"
               value={form.employeeId}
-              onChange={(e) => setForm({ ...form, employeeId: e.target.value })} />
-            {errors.employeeId && <span className="error">{errors.employeeId}</span>}
+              onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
+            />
+            {errors.employeeId && (
+              <span className="error">{errors.employeeId}</span>
+            )}
           </div>
 
           <div className="field">
-            <input placeholder="Asset Name"
+            <input
+              placeholder="Asset Name"
               value={form.assetName}
-              onChange={(e) => setForm({ ...form, assetName: e.target.value })} />
-            {errors.assetName && <span className="error">{errors.assetName}</span>}
+              onChange={(e) => setForm({ ...form, assetName: e.target.value })}
+            />
+            {errors.assetName && (
+              <span className="error">{errors.assetName}</span>
+            )}
           </div>
         </div>
 
         {/* ROW 2 */}
         <div className="row">
           <div className="field">
-            <input placeholder="Employee Name"
+            <input
+              placeholder="Employee Name"
               value={form.employeeName}
-              onChange={(e) => setForm({ ...form, employeeName: e.target.value })} />
-            {errors.employeeName && <span className="error">{errors.employeeName}</span>}
+              onChange={(e) =>
+                setForm({ ...form, employeeName: e.target.value })
+              }
+            />
+            {errors.employeeName && (
+              <span className="error">{errors.employeeName}</span>
+            )}
           </div>
 
           <div className="field">
-            <select value={form.issueType}
-              onChange={(e) => setForm({ ...form, issueType: e.target.value })}>
+            <select
+              value={form.issueType}
+              onChange={(e) => setForm({ ...form, issueType: e.target.value })}
+            >
               <option value="">Issue Type</option>
               <option>Hardware Issue</option>
               <option>Software Issue</option>
               <option>Network Issue</option>
               <option>Security Issue</option>
             </select>
-            {errors.issueType && <span className="error">{errors.issueType}</span>}
+            {errors.issueType && (
+              <span className="error">{errors.issueType}</span>
+            )}
           </div>
 
           <div className="field">
-            <select value={form.priority}
-              onChange={(e) => setForm({ ...form, priority: e.target.value })}>
+            <select
+              value={form.priority}
+              onChange={(e) => setForm({ ...form, priority: e.target.value })}
+            >
               <option value="">Priority</option>
               <option>Low</option>
               <option>Medium</option>
               <option>High</option>
               <option>Critical</option>
             </select>
-            {errors.priority && <span className="error">{errors.priority}</span>}
+            {errors.priority && (
+              <span className="error">{errors.priority}</span>
+            )}
           </div>
         </div>
 
         {/* DATE */}
-        <div className="row">
+        <div className="row date-row">
           <div className="field">
-            <input type="date"
+            <input
+              type="date"
               value={form.createdDate}
-              onChange={(e) => setForm({ ...form, createdDate: e.target.value })} />
-            {errors.createdDate && <span className="error">{errors.createdDate}</span>}
+              onChange={(e) =>
+                setForm({ ...form, createdDate: e.target.value })
+              }
+            />
+            {errors.createdDate && (
+              <span className="error">{errors.createdDate}</span>
+            )}
           </div>
         </div>
 
@@ -123,16 +152,19 @@ export default function EmployeeIncidentForm({ goBack }) {
             <textarea
               placeholder="Incident Description..."
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
             />
-            {errors.description && <span className="error">{errors.description}</span>}
+            {errors.description && (
+              <span className="error">{errors.description}</span>
+            )}
           </div>
         </div>
 
         <button type="submit" className="btn">
           Submit Incident
         </button>
-
       </form>
     </div>
   );

@@ -28,7 +28,6 @@ function SuperAdmin() {
     totalAssets: 0,
     assignedAssets: 0,
     availableAssets: 0,
-    underRepair: 0,
     Incidents: 0,
   });
 
@@ -62,7 +61,6 @@ function SuperAdmin() {
     { label: "Total Asset", value: stats.totalAssets || 0 },
     { label: "Assets Assigned", value: stats.assignedAssets || 0 },
     { label: "Assets Available", value: stats.availableAssets || 0 },
-    { label: "Assets Under Repair", value: stats.underRepair || 0 },
     { label: "Incidents", value: stats.Incidents || 0 },
   ];
 

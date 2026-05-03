@@ -30,23 +30,31 @@ app.get("/api/assets-stats", (req, res) => {
     WHERE status = 'Assigned'
   `;
 
+  const q3 = "SELECT COUNT(*) AS totalIncidents FROM incidents"; // ✅ ADD THIS
+
   db.query(q1, (err1, r1) => {
     if (err1) return res.json(err1);
 
     db.query(q2, (err2, r2) => {
       if (err2) return res.json(err2);
 
-      const total = r1[0].totalAssets;
-      const assigned = r2[0].assignedAssets;
+      db.query(q3, (err3, r3) => {   // ✅ ADD THIS BLOCK
+        if (err3) return res.json(err3);
 
-      const available = total - assigned;
+        const total = r1[0].totalAssets;
+        const assigned = r2[0].assignedAssets;
+        const incidents = r3[0].totalIncidents; // ✅ GET VALUE
 
-      res.json({
-        totalAssets: total,
-        assignedAssets: assigned,
-        availableAssets: available,
-        underRepair: 0
+        const available = total - assigned;
+
+        res.json({
+          totalAssets: total,
+          assignedAssets: assigned,
+          availableAssets: available,
+          Incidents: incidents   // ✅ SEND TO FRONTEND
+        });
       });
+
     });
   });
 

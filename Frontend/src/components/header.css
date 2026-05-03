@@ -8,14 +8,14 @@
   padding: 10px 15px;
   gap: 15px;
 
-  background: #ffffff;          /* 🔥 white card */
-  border-radius: 20px;          /* 🔥 rounded */
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05);  /* 🔥 soft shadow */
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
 /* ================= HAMBURGER ================= */
 .hamburger {
-  display: none; /* hidden on desktop */
+  display: none;
   background: #646cff;
   border: none;
   font-size: 24px;
@@ -30,18 +30,18 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background: #f1eef9; 
+  background: #f1eef9;
   border-radius: 50px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
   padding: 10px 15px;
-  position: relative;   /* ✅ ADD THIS */
+  position: relative;
 }
 
 .search-icon {
   position: absolute;
-  left: 15px;     /* 👈 left me fix */
+  left: 15px;
   top: 50%;
-  transform: translateY(-50%);  /* 👈 center vertically */
+  transform: translateY(-50%);
   color: #999;
   font-size: 14px;
 }
@@ -50,83 +50,107 @@
   border: none;
   outline: none;
   background: transparent;
-  padding-left: 20px;
-  margin-left: 10px;
+  padding-left: 25px;
   width: 100%;
   font-size: 14px;
 }
 
-/* ================= REMINDER ================= */
-.reminder-card {
+/* ================= NOTIFICATION ================= */
+.notification-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-
-  background: #ffffff;
-  border-radius: 14px;
-
-  padding: 10px 14px;
-  max-width: 360px;
-
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
-/* bell */
-.bell-box {
-  background: #ffecec;
-  padding: 10px;
-  border-radius: 10px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+/* 🔔 Bell */
 .bell-icon {
+  background: #f1eef9;
   color: #6a0dad;
+  padding: 10px;
+  border-radius: 50%;
   font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* text */
-.reminder-content h4 {
-  font-size: 12px;
-  margin: 0;
-  font-weight: 600;
+.bell-icon:hover {
+  background: #e2dbf7;
 }
 
-.reminder-content p {
+/* 🔴 Badge */
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: white;
   font-size: 10px;
-  color: #777;
-  margin: 2px 0 0;
-  line-height: 1.4;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+/* ================= DROPDOWN ================= */
+.notification-box {
+  position: absolute;
+  top: 50px;
+  right: 0;
+
+  width: 270px;
+  max-height: 300px;
+  overflow-y: auto;
+
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+  z-index: 999;
+}
+
+.notification-box h4 {
+  padding: 10px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ================= ITEMS ================= */
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background: #f5f5ff;
+}
+
+.notification-item strong {
+  font-size: 13px;
+}
+
+.notification-item p {
+  font-size: 12px;
+  color: #555;
+  margin: 3px 0;
+}
+
+.notification-item small {
+  font-size: 10px;
+  color: #999;
+}
+
+.empty {
+  text-align: center;
+  padding: 10px;
+  font-size: 12px;
 }
 
 /* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
 
-  .search-container {
-    display: none; /* hide search on mobile */
-  }
-
-  .reminder-card {
-    display: none; /* hide reminder on mobile */
-  }
-}
-/* ================= EXTRA RESPONSIVE FIX ================= */
-
-/* 📱 Tablet */
+/* Tablet */
 @media (max-width: 1024px) {
-
   .header-wrapper {
     padding: 10px;
     gap: 10px;
-  }
-
-  .reminder-card {
-    max-width: 250px; /* shrink */
   }
 
   .main-input {
@@ -134,21 +158,18 @@
   }
 }
 
-/* 📱 Mobile */
+/* Mobile */
 @media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
 
   .header-wrapper {
     justify-content: space-between;
     gap: 8px;
   }
 
-  .hamburger {
-    display: block;
-  }
-
-  /* search ko hide nahi, compact karo */
   .search-container {
-    display: flex;
     flex: 1;
     padding: 6px 10px;
   }
@@ -160,18 +181,16 @@
 
   .main-input {
     font-size: 12px;
-    padding-left: 18px;
+    padding-left: 20px;
   }
 
-  /* reminder hide */
-  .reminder-card {
-    display: none;
+  .notification-box {
+    right: -20px;
   }
 }
 
-/* 📱 Small Mobile */
+/* Small Mobile */
 @media (max-width: 480px) {
-
   .header-wrapper {
     height: auto;
     flex-wrap: wrap;
@@ -180,7 +199,7 @@
 
   .search-container {
     width: 100%;
-    order: 3; /* niche shift */
+    order: 3;
   }
 
   .hamburger {

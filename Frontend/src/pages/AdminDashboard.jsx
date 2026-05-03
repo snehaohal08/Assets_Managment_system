@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     totalAssets: 0,
     assignedAssets: 0,
     availableAssets: 0,
-    underRepair: 0,
+   
     Incidents: 0,
   });
 
@@ -49,7 +49,6 @@ export default function AdminDashboard() {
     { label: "Total Assets", value: stats.totalAssets },
     { label: "Assets Assigned", value: stats.assignedAssets },
     { label: "Assets Available", value: stats.availableAssets },
-    { label: "Assets Under Repair", value: stats.underRepair },
     { label: "Incidents", value: stats.Incidents || 0 },
   ];
 

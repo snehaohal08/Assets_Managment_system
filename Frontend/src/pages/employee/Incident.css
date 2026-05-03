@@ -118,7 +118,7 @@ h2,
   background: #fff;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(173, 171, 171, 0.08);
 }
 
 /* ROW */
@@ -138,6 +138,20 @@ h2,
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+/* ================= DATE FIELD FIX ================= */
+.row .field input[type="date"] {
+  max-width: 180px;   /* 👈 size control */
+  width: 100%;
+  height: 38px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+/* optional: date ko center align karne ke liye */
+.row.date-row {
+  justify-content: flex-start;
+  gap: 10px;
 }
 
 /* INPUT / SELECT / TEXTAREA */
