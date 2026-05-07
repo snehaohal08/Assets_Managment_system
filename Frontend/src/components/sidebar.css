@@ -101,7 +101,22 @@
   transition: 0.3s ease;
 }
 
-/* ================= MOBILE RESPONSIVE ================= */
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .main-content {
+    margin-left: 220px;
+  }
+
+  .menu-item {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+}
+
 @media (max-width: 768px) {
 
   .sidebar {
@@ -131,5 +146,10 @@
   .menu-item {
     font-size: 13px;
     padding: 10px 14px;
+  }
+
+  .logo-circle {
+    width: 70px;
+    height: 70px;
   }
 }

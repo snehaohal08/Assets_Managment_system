@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { FaBars } from "react-icons/fa";
 import axios from "axios";
+
+import Sidebar_super from "../../components/Sidebar_super";
+import Header from "../../components/Header";
 
 import AssetsBarChart from "../../components/AssetsBarChart";
 import DonutChart from "../../components/DonutChart";
 
-import "../AdminDashboard.css";
-import "../../components/sidebar.css";
-
-import Sidebar_super from "../../components/Sidebar_super";
 import AssetsAllocation from "../assets/AssetsAllocation";
 import EmployeeList from "../employee/EmployeeList";
 import AssetsTable from "./AssetsTable";
-import Header from "../../components/Header";
 import IncidentList from "../employee/IncidentList";
 
-// import IncidentList from "../employee/IncidentList";
+import "./superadmin_d.css";
 
-function SuperAdmin() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export default function SuperAdmin() {
   const [activePage, setActivePage] = useState("Dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ❌ REMOVE showForm (not needed here)
-
-  // ✅ STATS
   const [stats, setStats] = useState({
     totalAssets: 0,
     assignedAssets: 0,
@@ -31,12 +25,8 @@ function SuperAdmin() {
     Incidents: 0,
   });
 
-  // ✅ FIX: notifications state (IF YOU WANT LATER)
-  const [notifications, setNotifications] = useState([]);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // API
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets-stats")
@@ -44,28 +34,15 @@ function SuperAdmin() {
       .catch((err) => console.log(err));
   }, []);
 
-  // ✅ OPTIONAL: if you want notifications (FIXED)
-  const addIncidentNotification = (data) => {
-    setNotifications((prev) => [
-      {
-        id: Date.now(),
-        title: `Incident: ${data.assetName}`,
-        problem: data.issue,
-        time: new Date().toLocaleTimeString(),
-      },
-      ...prev,
-    ]);
-  };
-
   const statsCards = [
-    { label: "Total Asset", value: stats.totalAssets || 0 },
-    { label: "Assets Assigned", value: stats.assignedAssets || 0 },
-    { label: "Assets Available", value: stats.availableAssets || 0 },
-    { label: "Incidents", value: stats.Incidents || 0 },
+    { label: "Total Assets", value: stats.totalAssets },
+    { label: "Assigned Assets", value: stats.assignedAssets },
+    { label: "Available Assets", value: stats.availableAssets },
+    { label: "Incidents", value: stats.Incidents },
   ];
 
   return (
-    <div className="dashboard-container">
+    <div className="superadmin-dashboard-container">
 
       <Sidebar_super
         setActivePage={setActivePage}
@@ -73,89 +50,61 @@ function SuperAdmin() {
         toggleSidebar={toggleSidebar}
       />
 
-      {sidebarOpen && (
-        <div className="sidebar-backdrop" onClick={toggleSidebar}></div>
-      )}
-
-      <div className="main-content">
+      <div className="superadmin-main-content">
 
         <Header toggleSidebar={toggleSidebar} />
 
-        <div className="header">
-          <div className="left-header">
-            <FaBars className="toggle-icon" onClick={toggleSidebar} />
-            <h2>{activePage}</h2>
-          </div>
-        </div>
-
-        {/* DASHBOARD */}
         {activePage === "Dashboard" && (
-          <div className="dashboard-body">
-
-            <div className="stats-column">
+          <>
+            {/* STATS */}
+            <div className="stats-grid">
               {statsCards.map((s, i) => (
                 <div className="stat-card" key={i}>
                   <span>{s.label}</span>
-                  <h3>{s.value}</h3>
+                  <h2>{s.value}</h2>
                 </div>
               ))}
             </div>
 
-            <div className="right-section">
+            {/* DASHBOARD GRID */}
+            <div className="dashboard-layout-grid">
 
-              <div className="chart-wrapper">
+              <div className="graph-box">
+                <h3>Assets Overview</h3>
                 <AssetsBarChart />
               </div>
 
-              <div className="bottom-grid">
+              <div className="pie-box">
+                <h3>Allocation Status</h3>
+                <DonutChart />
+              </div>
 
-                <div className="pie-card">
-                  <DonutChart />
-                </div>
-
-                <div className="repair-card">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>Assigned</td>
-                        <td>{stats.assignedAssets}</td>
-                      </tr>
-                      <tr>
-                        <td>Available</td>
-                        <td>{stats.availableAssets}</td>
-                      </tr>
-                      <tr>
-                        <td>Repair</td>
-                        <td>{stats.underRepair}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
+              <div className="summary-box">
+                <h3>Quick Summary</h3>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>Assigned</td>
+                      <td>{stats.assignedAssets}</td>
+                    </tr>
+                    <tr>
+                      <td>Available</td>
+                      <td>{stats.availableAssets}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
             </div>
-
-          </div>
+          </>
         )}
 
-        {/* OTHER PAGES */}
         {activePage === "Assets" && <AssetsTable />}
-
         {activePage === "Assets Allocation" && <AssetsAllocation />}
-
-        {activePage === "Employee List" && (
-          <EmployeeList setShowForm={() => {}} />
-        )}
-
-        {/* ✅ INCIDENT PAGE (ONLY VIEW DATA) */}
-{activePage === "Incident Log" && (
-  <IncidentList role="superadmin" />
-)}
+        {activePage === "Employee List" && <EmployeeList />}
+        {activePage === "Incident Log" && <IncidentList role="superadmin" />}
 
       </div>
     </div>
   );
 }
-
-export default SuperAdmin;

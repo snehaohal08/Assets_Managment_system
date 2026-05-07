@@ -156,6 +156,10 @@
   .main-input {
     font-size: 13px;
   }
+
+  .notification-box {
+    width: 250px;
+  }
 }
 
 /* Mobile */
@@ -205,5 +209,15 @@
   .hamburger {
     font-size: 20px;
     padding: 8px;
+  }
+
+  .bell-icon {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .notification-box {
+    width: 90vw;
+    right: -10px;
   }
 }

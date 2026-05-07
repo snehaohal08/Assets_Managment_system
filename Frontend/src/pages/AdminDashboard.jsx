@@ -1,124 +1,107 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import axios from "axios";
+
 import AssetsBarChart from "../components/AssetsBarChart";
 import DonutChart from "../components/DonutChart";
-import axios from "axios";
-import "./AdminDashboard.css";
+
 import AssetsData from "./assets/AssetsData";
 import AssetsAllocation from "./assets/AssetsAllocation";
 import IncidentList from "./employee/IncidentList";
 
+import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [stats, setStats] = useState({
-    totalAssets: 0,
-    assignedAssets: 0,
-    availableAssets: 0,
-   
-    Incidents: 0,
-  });
+const [stats, setStats] = useState({
+  totalAssets: 0,
+  assignedAssets: 0,
+  availableAssets: 0,
+  Incidents: 0,
+  underRepair: 0
+});
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  /* ================= FETCH STATS ================= */
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets-stats")
       .then((res) => setStats(res.data))
       .catch((err) => console.log(err));
   }, []);
-  
-  const addIncidentNotification = (data) => {
-    setNotifications((prev) => [
-      {
-        id: Date.now(),
-        title: `Incident: ${data.assetName}`,
-        problem: data.issue,
-        time: new Date().toLocaleTimeString(),
-      },
-      ...prev,
-    ]);
-  };
 
-  /* ================= CARDS ================= */
   const cards = [
     { label: "Total Assets", value: stats.totalAssets },
-    { label: "Assets Assigned", value: stats.assignedAssets },
-    { label: "Assets Available", value: stats.availableAssets },
-    { label: "Incidents", value: stats.Incidents || 0 },
+    { label: "Assigned", value: stats.assignedAssets },
+    { label: "Available", value: stats.availableAssets },
+    { label: "Incidents", value: stats.Incidents },
   ];
 
   return (
-    <div className="dashboard-container">
+    <div className="admin-dashboard-container">
+
       <Sidebar
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
       />
 
-      <div className="main-content">
+      <div className="admin-main-content">
+
         <Header toggleSidebar={toggleSidebar} />
 
-        {/* ================= DASHBOARD ================= */}
         {activePage === "Dashboard" && (
-          <div className="dashboard-body">
-            {/* LEFT CARDS */}
-            <div className="stats-column">
+          <>
+            {/* STATS */}
+            <div className="stats-grid">
               {cards.map((item, i) => (
                 <div className="stat-card" key={i}>
                   <span>{item.label}</span>
-                  <h3>{item.value}</h3>
+                  <h2>{item.value}</h2>
                 </div>
               ))}
             </div>
 
-            {/* RIGHT SIDE */}
-            <div className="right-section">
-              {/* BAR CHART */}
-              <div className="chart-wrapper">
+            {/* CHARTS */}
+            <div className="dashboard-layout-grid">
+
+              <div className="graph-box">
                 <h3>Assets Overview</h3>
                 <AssetsBarChart />
               </div>
 
-              {/* PIE CHART */}
-              <div className="bottom-grid">
-                <div className="pie-card">
-                  <h3>Allocation Status</h3>
-                  <DonutChart />
-                </div>
-
-                <div className="repair-card">
-                  <h3>Quick Summary</h3>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>Assigned</td>
-                        <td>{stats.assignedAssets}</td>
-                      </tr>
-                      <tr>
-                        <td>Available</td>
-                        <td>{stats.availableAssets}</td>
-                      </tr>
-                      <tr>
-                        <td>Repair</td>
-                        <td>{stats.underRepair}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+              <div className="pie-box">
+                <h3>Allocation Status</h3>
+                <DonutChart />
               </div>
+
+              <div className="summary-box">
+                <h3>Quick Summary</h3>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>Assigned</td>
+                      <td>{stats.assignedAssets}</td>
+                    </tr>
+                    <tr>
+                      <td>Available</td>
+                      <td>{stats.availableAssets}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
             </div>
-          </div>
+          </>
         )}
+
         {activePage === "Assets" && <AssetsData />}
         {activePage === "Assets Allocation" && <AssetsAllocation />}
-{activePage === "Incident Log" && (
-  <IncidentList role="admin" />
-)}
+        {activePage === "Incident Log" && <IncidentList role="admin" />}
+
       </div>
     </div>
   );

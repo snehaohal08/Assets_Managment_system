@@ -3,20 +3,37 @@ import { useIncident } from "../../context/IncidentContext";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import "./Incident.css";
 
-export default function IncidentList() {
-  const { incidents, deleteIncident, updateIncident } = useIncident();
+export default function IncidentList({ employeeId }) {
+
+  const {
+    incidents,
+    deleteIncident,
+    updateIncident
+  } = useIncident();
 
   const [editData, setEditData] = useState(null);
   const [viewData, setViewData] = useState(null);
 
+  // ✅ REMOVE SPACE + LOWERCASE
+  const filteredIncidents = employeeId
+    ? incidents.filter(
+        (i) =>
+          i.employeeId?.trim().toLowerCase() ===
+          employeeId?.trim().toLowerCase()
+      )
+    : incidents;
+
   return (
     <div className="incident-list-wrapper">
+
       <h2>Incident List</h2>
 
-      {incidents.length === 0 ? (
+      {filteredIncidents.length === 0 ? (
         <p>No Incidents Found</p>
       ) : (
+
         <table className="incident-table">
+
           <thead>
             <tr>
               <th>Asset</th>
@@ -29,23 +46,32 @@ export default function IncidentList() {
           </thead>
 
           <tbody>
-            {incidents.map((i) => (
+
+            {filteredIncidents.map((i) => (
+
               <tr key={i.id}>
+
+                {/* ASSET */}
                 <td>
                   {i.assetId}
                   <br />
                   <small>{i.assetName}</small>
                 </td>
 
+                {/* EMPLOYEE */}
                 <td>
                   {i.employeeId}
                   <br />
                   <small>{i.employeeName}</small>
                 </td>
 
+                {/* ISSUE */}
                 <td>{i.issueType}</td>
+
+                {/* DATE */}
                 <td>{i.createdDate}</td>
 
+                {/* STATUS */}
                 <td>
                   <span
                     className={`status-badge ${i.status
@@ -56,25 +82,45 @@ export default function IncidentList() {
                   </span>
                 </td>
 
+                {/* ACTIONS */}
                 <td className="actions">
-                  <FaEye onClick={() => setViewData(i)} />
-                  <FaEdit onClick={() => setEditData(i)} />
-                  <FaTrash onClick={() => deleteIncident(i.id)} />
+
+                  <FaEye
+                    onClick={() => setViewData(i)}
+                    style={{ cursor: "pointer" }}
+                  />
+
+                  <FaEdit
+                    onClick={() => setEditData(i)}
+                    style={{ cursor: "pointer" }}
+                  />
+
+                  <FaTrash
+                    onClick={() => deleteIncident(i.id)}
+                    style={{ cursor: "pointer" }}
+                  />
+
                 </td>
+
               </tr>
             ))}
+
           </tbody>
         </table>
       )}
 
-      {/* 👁️ VIEW MODAL */}
+      {/* ================= VIEW MODAL ================= */}
       {viewData && (
+
         <div className="modal">
+
           <div className="modal-box view-box">
+
             <h3>Incident Details</h3>
 
             <div className="view-row">
               <span>Asset:</span>
+
               <p>
                 {viewData.assetName} ({viewData.assetId})
               </p>
@@ -82,6 +128,7 @@ export default function IncidentList() {
 
             <div className="view-row">
               <span>Employee:</span>
+
               <p>
                 {viewData.employeeName} ({viewData.employeeId})
               </p>
@@ -99,6 +146,7 @@ export default function IncidentList() {
 
             <div className="view-row">
               <span>Status:</span>
+
               <p
                 className={`status-badge ${viewData.status
                   ?.toLowerCase()
@@ -109,22 +157,31 @@ export default function IncidentList() {
             </div>
 
             <div className="modal-actions">
-              <button onClick={() => setViewData(null)}>Close</button>
+              <button onClick={() => setViewData(null)}>
+                Close
+              </button>
             </div>
+
           </div>
         </div>
       )}
 
-      {/* ✏️ EDIT MODAL */}
+      {/* ================= EDIT MODAL ================= */}
       {editData && (
+
         <div className="modal">
+
           <div className="modal-box">
+
             <h3>Edit Incident</h3>
 
             <select
               value={editData.status}
               onChange={(e) =>
-                setEditData({ ...editData, status: e.target.value })
+                setEditData({
+                  ...editData,
+                  status: e.target.value,
+                })
               }
             >
               <option>Open</option>
@@ -134,20 +191,33 @@ export default function IncidentList() {
             </select>
 
             <div className="modal-actions">
+
               <button
-                onClick={() => {
-                  updateIncident(editData.id, editData);
+                onClick={async () => {
+
+                  await updateIncident(
+                    editData.id,
+                    editData
+                  );
+
                   setEditData(null);
                 }}
               >
                 Save
               </button>
 
-              <button onClick={() => setEditData(null)}>Cancel</button>
+              <button
+                onClick={() => setEditData(null)}
+              >
+                Cancel
+              </button>
+
             </div>
+
           </div>
         </div>
       )}
+
     </div>
   );
 }

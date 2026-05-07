@@ -120,7 +120,24 @@ h2,
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(173, 171, 171, 0.08);
 }
+.alert-box{
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
 
+.alert-box.success{
+  background: #d4edda;
+  color: #155724;
+}
+
+.alert-box.error{
+  background: #f8d7da;
+  color: #721c24;
+}
 /* ROW */
 .row {
   display: flex;

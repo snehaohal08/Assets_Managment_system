@@ -1,196 +1,125 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaBell, FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 import axios from "axios";
 
-import AssetsBarChart from "../components/AssetsBarChart";
-import DonutChart from "../components/DonutChart";
-import AssetsData from "./assets/AssetsData";
-import AssetsAllocation from "./assets/AssetsAllocation";
 import SideBar_emp from "../components/SideBar_emp";
-import EmployeeList from "./employee/EmployeeList";
-
-import EmployeeForm from "./employee/EmployeeForm";
-
-import "./AdminDashboard.css";
-import "../components/sidebar.css";
+import { useIncident } from "../context/IncidentContext";
 
 import EmployeeIncidentForm from "./employee/EmployeeIncidentForm";
+import IncidentList from "./employee/IncidentList";
+
+import "./EmployeeDashbord.css";
 
 export default function EmployeeDashboard() {
 
-  const [activePage, setActivePage] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activePage, setActivePage] = useState("Dashboard");
 
-  const [search, setSearch] = useState("");
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
+  // ✅ SAFE USER FETCH
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [employees, setEmployees] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  // ✅ REDIRECT IF NOT LOGGED IN
+  useEffect(() => {
+    if (!user?.empCode) {
+      window.location.href = "/"; // login page
+    }
+  }, []);
 
-  // 🔥 SAFE STATS
+  // ✅ backend stats
   const [stats, setStats] = useState({
-    totalAssets: 0,
-    assignedAssets: 0,
-    availableAssets: 0,
-    Incidents: 0,
+    total: 0,
+    open: 0,
+    inProgress: 0,
+    closed: 0
   });
+
+  const { incidents } = useIncident();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const showHeaderActions =
-    activePage === "Dashboard" || activePage === "Employee List";
-
-  // ================= API =================
+  // ✅ API CALL (employee specific)
   useEffect(() => {
+    if (!user?.empCode) return;
+
     axios
-      .get("http://localhost:5000/api/assets-stats")
-      .then((res) => {
-        console.log("STATS:", res.data);
-        setStats(res.data);
-      })
-      .catch((err) => console.log("API ERROR:", err));
-  }, []);
+      .get(`http://localhost:5000/api/employee-stats/${user.empCode}`)
+      .then((res) => setStats(res.data))
+      .catch((err) => console.log(err));
+  }, [user]);
 
-  // ================= EMPLOYEE =================
-  const addEmployee = (data) => {
-    setEmployees((prev) => [...prev, data]);
-    setShowForm(false);
-
-    setNotifications((prev) => [
-      {
-        id: Date.now(),
-        title: "Employee Added",
-        problem: data?.name || "New Employee",
-        time: new Date().toLocaleTimeString(),
-      },
-      ...prev,
-    ]);
-  };
-
-  const addIncidentNotification = (data) => {
-    setNotifications((prev) => [
-      {
-        id: Date.now(),
-        title: `Incident: ${data.assetName}`,
-        problem: data.issue,
-        time: new Date().toLocaleTimeString(),
-      },
-      ...prev,
-    ]);
-  };
-
-  const removeNotification = (id) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
-  if (showForm) {
-    return (
-      <EmployeeForm
-        addEmployee={addEmployee}
-        goBack={() => setShowForm(false)}
-      />
-    );
-  }
-
-  // ================= SAFE CARDS =================
-  const statsCards = [
-    { label: "Total Asset", value: stats.totalAssets || 0 },
-    { label: "Assets Assigned", value: stats.assignedAssets || 0 },
-    { label: "Assets Available", value: stats.availableAssets || 0 },
-    { label: "Incidents", value: stats.Incidents || 0 }
-
-  ];
+  // ✅ FILTER INCIDENTS
+  const myIncidents = incidents.filter(
+    (i) => i.employeeId === user?.empCode
+  );
 
   return (
-    <div className="dashboard-container">
+    <div className="employee-dashboard-container">
 
       <SideBar_emp
-        setActivePage={setActivePage}
-        isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
+        isOpen={sidebarOpen}
+        setActivePage={setActivePage}
       />
 
-      {sidebarOpen && (
-        <div className="sidebar-backdrop" onClick={toggleSidebar}></div>
-      )}
-
-      <div className="main-content">
+      <div className="employee-main-content">
 
         {/* HEADER */}
-        <div className="header">
-          <div className="left-header">
-            <FaBars className="toggle-icon" onClick={toggleSidebar} />
-            <h2>{activePage}</h2>
-          </div>
-        </div>
-
-        {/* DASHBOARD */}
         {activePage === "Dashboard" && (
-          <div className="dashboard-body">
+          <div className="employee-header">
+            <div className="header-left">
+              <FaBars className="toggle-icon" onClick={toggleSidebar} />
 
-            {/* LEFT STATS */}
-            <div className="stats-column">
-              {statsCards.map((s, i) => (
-                <div className="stat-card" key={i}>
-                  <span>{s.label}</span>
-                  <h3>{s.value}</h3>
-                </div>
-              ))}
-            </div>
-
-            {/* RIGHT */}
-            <div className="right-section">
-
-              <div className="chart-wrapper">
-                <AssetsBarChart />
+              <div className="header-text">
+                <h2>Employee Dashboard</h2>
+                <p>Track your incidents & manage requests</p>
               </div>
-
-              <div className="bottom-grid">
-
-                <div className="pie-card">
-                  <DonutChart />
-                </div>
-
-                <div className="repair-card">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>Assigned</td>
-                        <td>{stats.assignedAssets}</td>
-                      </tr>
-                      <tr>
-                        <td>Available</td>
-                        <td>{stats.availableAssets}</td>
-                      </tr>
-                      <tr>
-                        <td>Repair</td>
-                        <td>{stats.underRepair}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-              </div>
-
             </div>
-
           </div>
         )}
 
-        {/* OTHER PAGES */}
-        {activePage === "Assets" && <AssetsData />}
-        {activePage === "Assets Allocation" && <AssetsAllocation />}
-        {activePage === "Employee List" && (
-          <EmployeeList
-            employees={employees}
-            setEmployees={setEmployees}
-            setShowForm={setShowForm}
-          />
+        {/* DASHBOARD CARDS */}
+        {activePage === "Dashboard" && (
+          <>
+            <div className="employee-cards">
+
+              <div className="employee-card blue">
+                <h3>Total Incidents</h3>
+                <h2>{stats.total}</h2>
+              </div>
+
+              <div className="employee-card green">
+                <h3>Completed</h3>
+                <h2>{stats.closed}</h2>
+              </div>
+
+              <div className="employee-card orange">
+                <h3>Pending</h3>
+                <h2>{stats.open}</h2>
+              </div>
+
+              <div className="employee-card purple">
+                <h3>In Progress</h3>
+                <h2>{stats.inProgress}</h2>
+              </div>
+
+            </div>
+
+            {/* ✅ ONLY THIS EMPLOYEE DATA */}
+            {/* <div className="employee-table-section">
+              <IncidentList
+                role="employee"
+                employeeId={user?.empCode}  // 🔥 IMPORTANT
+              />
+            </div> */}
+          </>
         )}
-{activePage === "Incident Log" && (
-  <EmployeeIncidentForm goBack={() => setActivePage("Dashboard")} />
-)}
+
+        {/* RAISE INCIDENT */}
+
+        {activePage === "Raise Incident" && (
+          <EmployeeIncidentForm employeeId={user?.empCode} />
+        )}
+        {activePage === "My Incidents" && <IncidentList role="employee" employeeId={user?.empCode} />}
 
       </div>
     </div>
