@@ -17,6 +17,7 @@ export default function Sidebar({ setActivePage, activePage, isOpen, toggleSideb
     { name: "Dashboard", icon: <FaTachometerAlt /> },
     { name: "Assets", icon: <FaLaptop /> },
     { name: "Assets Allocation", icon: <FaUsers /> },
+    { name: "Employee List", icon: <FaUsers /> },
     { name: "Incident Log", icon: <FaTools /> },
   ];
 

@@ -11,38 +11,56 @@ import AssetsAllocation from "./assets/AssetsAllocation";
 import IncidentList from "./employee/IncidentList";
 
 import "./AdminDashboard.css";
+import EmployeeList from "./employee/EmployeeList";
 
 export default function AdminDashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-const [stats, setStats] = useState({
-  totalAssets: 0,
-  assignedAssets: 0,
-  availableAssets: 0,
-  Incidents: 0,
-  underRepair: 0
-});
+  const [stats, setStats] = useState({
+    totalAssets: 0,
+    assignedAssets: 0,
+    remainingAssets: 0,
+    underRepair: 0,
+    Incidents: 0,
+  });
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
+  // FETCH DASHBOARD STATS
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets-stats")
-      .then((res) => setStats(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        console.log("API DATA:", res.data);
+        setStats(res.data);
+      })
+      .catch((err) => console.log("API Error:", err));
   }, []);
 
+  // DASHBOARD CARDS
   const cards = [
-    { label: "Total Assets", value: stats.totalAssets },
-    { label: "Assigned", value: stats.assignedAssets },
-    { label: "Available", value: stats.availableAssets },
-    { label: "Incidents", value: stats.Incidents },
+    {
+      label: "Total Assets",
+      value: stats.totalAssets,
+    },
+    {
+      label: "Assigned Assets",
+      value: stats.assignedAssets,
+    },
+    {
+      label: "Remaining Assets",
+      value: stats.remainingAssets,
+    },
+    {
+      label: "Need Repair",
+      value: stats.underRepair,
+    },
   ];
 
   return (
     <div className="admin-dashboard-container">
-
       <Sidebar
         setActivePage={setActivePage}
         isOpen={sidebarOpen}
@@ -50,12 +68,11 @@ const [stats, setStats] = useState({
       />
 
       <div className="admin-main-content">
-
         <Header toggleSidebar={toggleSidebar} />
 
         {activePage === "Dashboard" && (
           <>
-            {/* STATS */}
+            {/* STATS CARDS */}
             <div className="stats-grid">
               {cards.map((item, i) => (
                 <div className="stat-card" key={i}>
@@ -67,7 +84,6 @@ const [stats, setStats] = useState({
 
             {/* CHARTS */}
             <div className="dashboard-layout-grid">
-
               <div className="graph-box">
                 <h3>Assets Overview</h3>
                 <AssetsBarChart />
@@ -80,28 +96,41 @@ const [stats, setStats] = useState({
 
               <div className="summary-box">
                 <h3>Quick Summary</h3>
+
                 <table>
                   <tbody>
+                    <tr>
+                      <td>Total Assets</td>
+                      <td>{stats.totalAssets}</td>
+                    </tr>
+
                     <tr>
                       <td>Assigned</td>
                       <td>{stats.assignedAssets}</td>
                     </tr>
+
                     <tr>
-                      <td>Available</td>
-                      <td>{stats.availableAssets}</td>
+                      <td>Remaining</td>
+                      <td>{stats.remainingAssets}</td>
+                    </tr>
+
+                    <tr>
+                      <td>Need Repair</td>
+                      <td>{stats.underRepair}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-
             </div>
           </>
         )}
 
         {activePage === "Assets" && <AssetsData />}
-        {activePage === "Assets Allocation" && <AssetsAllocation />}
-        {activePage === "Incident Log" && <IncidentList role="admin" />}
 
+        {activePage === "Assets Allocation" && <AssetsAllocation />}
+
+        {activePage === "Incident Log" && <IncidentList role="admin" />}
+        {activePage === "Employee List" && <EmployeeList />}
       </div>
     </div>
   );

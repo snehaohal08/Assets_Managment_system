@@ -20,32 +20,75 @@ app.use("/api/incidents", require("./routes/incidents"));
 /* ================= ADMIN + SUPERADMIN STATS ================= */
 app.get("/api/assets-stats", (req, res) => {
 
-  const q1 = "SELECT COUNT(*) AS totalAssets FROM assets";
-  const q2 = `
-    SELECT
-      SUM(CASE WHEN status = 'Assigned' THEN 1 ELSE 0 END) AS assignedAssets,
-      SUM(CASE WHEN status = 'Available' THEN 1 ELSE 0 END) AS availableAssets,
-      SUM(CASE WHEN condition_status = 'Need Repair' THEN 1 ELSE 0 END) AS underRepair
-    FROM asset_allocation
+  const totalAssetsQuery = `
+    SELECT COUNT(*) AS totalAssets
+    FROM assets
   `;
 
-  const q3 = "SELECT COUNT(*) AS totalIncidents FROM incidents";
+  const assignedAssetsQuery = `
+    SELECT COUNT(*) AS assignedAssets
+    FROM asset_allocation
+    WHERE status = 'Assigned'
+  `;
 
-  db.query(q1, (err1, r1) => {
-    if (err1) return res.json(err1);
+  const repairQuery = `
+    SELECT COUNT(*) AS underRepair
+    FROM asset_allocation
+    WHERE condition_status = 'Need Repair'
+  `;
 
-    db.query(q2, (err2, r2) => {
-      if (err2) return res.json(err2);
+  const incidentQuery = `
+    SELECT COUNT(*) AS totalIncidents
+    FROM incidents
+  `;
 
-      db.query(q3, (err3, r3) => {
-        if (err3) return res.json(err3);
+  db.query(totalAssetsQuery, (err1, totalResult) => {
 
-        res.json({
-          totalAssets: r1[0].totalAssets || 0,
-          assignedAssets: r2[0].assignedAssets || 0,
-          availableAssets: r2[0].availableAssets || 0,
-          underRepair: r2[0].underRepair || 0,
-          Incidents: r3[0].totalIncidents || 0
+    if (err1) {
+      console.log(err1);
+      return res.status(500).json(err1);
+    }
+
+    db.query(assignedAssetsQuery, (err2, assignedResult) => {
+
+      if (err2) {
+        console.log(err2);
+        return res.status(500).json(err2);
+      }
+
+      db.query(repairQuery, (err3, repairResult) => {
+
+        if (err3) {
+          console.log(err3);
+          return res.status(500).json(err3);
+        }
+
+        db.query(incidentQuery, (err4, incidentResult) => {
+
+          if (err4) {
+            console.log(err4);
+            return res.status(500).json(err4);
+          }
+
+          const totalAssets =
+            totalResult[0].totalAssets || 0;
+
+          const assignedAssets =
+            assignedResult[0].assignedAssets || 0;
+
+          const remainingAssets =
+            totalAssets - assignedAssets;
+
+          res.json({
+            totalAssets,
+            assignedAssets,
+            remainingAssets,
+            underRepair:
+              repairResult[0].underRepair || 0,
+            Incidents:
+              incidentResult[0].totalIncidents || 0
+          });
+
         });
       });
     });
@@ -68,13 +111,17 @@ app.get("/api/employee-stats/:empCode", (req, res) => {
   `;
 
   db.query(q, [empCode], (err, result) => {
-    if (err) return res.json(err);
+
+    if (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
 
     res.json({
-      total: result[0].total,
-      open: result[0].openCount,
-      inProgress: result[0].progressCount,
-      closed: result[0].closedCount
+      total: result[0].total || 0,
+      open: result[0].openCount || 0,
+      inProgress: result[0].progressCount || 0,
+      closed: result[0].closedCount || 0
     });
   });
 });

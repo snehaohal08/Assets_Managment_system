@@ -21,24 +21,43 @@ export default function SuperAdmin() {
   const [stats, setStats] = useState({
     totalAssets: 0,
     assignedAssets: 0,
-    availableAssets: 0,
+    remainingAssets: 0,
+    underRepair: 0,
     Incidents: 0,
   });
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const toggleSidebar = () =>
+    setSidebarOpen(!sidebarOpen);
 
+  // FETCH DASHBOARD STATS
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/assets-stats")
-      .then((res) => setStats(res.data))
+      .then((res) => {
+        console.log(res.data);
+        setStats(res.data);
+      })
       .catch((err) => console.log(err));
   }, []);
 
+  // DASHBOARD CARDS
   const statsCards = [
-    { label: "Total Assets", value: stats.totalAssets },
-    { label: "Assigned Assets", value: stats.assignedAssets },
-    { label: "Available Assets", value: stats.availableAssets },
-    { label: "Incidents", value: stats.Incidents },
+    {
+      label: "Total Assets",
+      value: stats.totalAssets,
+    },
+    {
+      label: "Assigned Assets",
+      value: stats.assignedAssets,
+    },
+    {
+      label: "Remaining Assets",
+      value: stats.remainingAssets,
+    },
+    {
+      label: "Need Repair",
+      value: stats.underRepair,
+    },
   ];
 
   return (
@@ -56,7 +75,7 @@ export default function SuperAdmin() {
 
         {activePage === "Dashboard" && (
           <>
-            {/* STATS */}
+            {/* STATS CARDS */}
             <div className="stats-grid">
               {statsCards.map((s, i) => (
                 <div className="stat-card" key={i}>
@@ -69,40 +88,68 @@ export default function SuperAdmin() {
             {/* DASHBOARD GRID */}
             <div className="dashboard-layout-grid">
 
+              {/* BAR CHART */}
               <div className="graph-box">
                 <h3>Assets Overview</h3>
                 <AssetsBarChart />
               </div>
 
+              {/* DONUT CHART */}
               <div className="pie-box">
                 <h3>Allocation Status</h3>
                 <DonutChart />
               </div>
 
+              {/* SUMMARY */}
               <div className="summary-box">
                 <h3>Quick Summary</h3>
+
                 <table>
                   <tbody>
+                    <tr>
+                      <td>Total Assets</td>
+                      <td>{stats.totalAssets}</td>
+                    </tr>
+
                     <tr>
                       <td>Assigned</td>
                       <td>{stats.assignedAssets}</td>
                     </tr>
+
                     <tr>
-                      <td>Available</td>
-                      <td>{stats.availableAssets}</td>
+                      <td>Remaining</td>
+                      <td>{stats.remainingAssets}</td>
+                    </tr>
+
+                    <tr>
+                      <td>Need Repair</td>
+                      <td>{stats.underRepair}</td>
                     </tr>
                   </tbody>
                 </table>
+
               </div>
 
             </div>
           </>
         )}
 
-        {activePage === "Assets" && <AssetsTable />}
-        {activePage === "Assets Allocation" && <AssetsAllocation />}
-        {activePage === "Employee List" && <EmployeeList />}
-        {activePage === "Incident Log" && <IncidentList role="superadmin" />}
+        {/* OTHER PAGES */}
+        {activePage === "Assets" && (
+          <AssetsTable />
+        )}
+
+        {activePage === "Assets Allocation" && (
+          <AssetsAllocation />
+        )}
+
+        {activePage === "Employee List" && (
+          <EmployeeList />
+        )}
+
+        {activePage === "Incident Log" && (
+          <IncidentList role="superadmin" />
+        )}
 
       </div>
     </div>
