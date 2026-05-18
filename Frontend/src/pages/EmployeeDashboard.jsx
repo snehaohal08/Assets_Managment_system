@@ -7,6 +7,7 @@ import { useIncident } from "../context/IncidentContext";
 
 import EmployeeIncidentForm from "./employee/EmployeeIncidentForm";
 import IncidentList from "./employee/IncidentList";
+import EmployeeAssetsTable from "./employee/EmployeeAssetsTable";
 
 import "./EmployeeDashbord.css";
 
@@ -15,29 +16,20 @@ export default function EmployeeDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState("Dashboard");
 
-  // ✅ SAFE USER FETCH
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  // ✅ REDIRECT IF NOT LOGGED IN
-  useEffect(() => {
-    if (!user?.empCode) {
-      window.location.href = "/"; // login page
-    }
-  }, []);
-
-  // ✅ backend stats
   const [stats, setStats] = useState({
     total: 0,
     open: 0,
     inProgress: 0,
-    closed: 0
+    closed: 0,
   });
 
-  const { incidents } = useIncident();
+  const [myAssets, setMyAssets] = useState([]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // ✅ API CALL (employee specific)
+  // INCIDENT STATS
   useEffect(() => {
     if (!user?.empCode) return;
 
@@ -47,10 +39,16 @@ export default function EmployeeDashboard() {
       .catch((err) => console.log(err));
   }, [user]);
 
-  // ✅ FILTER INCIDENTS
-  const myIncidents = incidents.filter(
-    (i) => i.employeeId === user?.empCode
-  );
+  // 🟢 FETCH ASSETS (ONLY DATA, NOT UI)
+  useEffect(() => {
+    if (!user?.empCode) return;
+
+    axios
+    .get(`http://localhost:5000/api/allocations/employee/${user.empCode}`)
+      .then((res) => setMyAssets(res.data))
+      .catch((err) => console.log(err));
+  }, [user]);
+  
 
   return (
     <div className="employee-dashboard-container">
@@ -68,20 +66,18 @@ export default function EmployeeDashboard() {
           <div className="employee-header">
             <div className="header-left">
               <FaBars className="toggle-icon" onClick={toggleSidebar} />
-
               <div className="header-text">
                 <h2>Employee Dashboard</h2>
-                <p>Track your incidents & manage requests</p>
+                <p>Track your incidents & requests</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* DASHBOARD CARDS */}
+        {/* DASHBOARD (NO TABLE HERE 🚫) */}
         {activePage === "Dashboard" && (
           <>
             <div className="employee-cards">
-
               <div className="employee-card blue">
                 <h3>Total Incidents</h3>
                 <h2>{stats.total}</h2>
@@ -101,25 +97,24 @@ export default function EmployeeDashboard() {
                 <h3>In Progress</h3>
                 <h2>{stats.inProgress}</h2>
               </div>
-
             </div>
-
-            {/* ✅ ONLY THIS EMPLOYEE DATA */}
-            {/* <div className="employee-table-section">
-              <IncidentList
-                role="employee"
-                employeeId={user?.empCode}  // 🔥 IMPORTANT
-              />
-            </div> */}
           </>
         )}
 
-        {/* RAISE INCIDENT */}
+        {/* ASSETS ONLY HERE ✅ */}
+        {activePage === "My Assets" && (
+          <EmployeeAssetsTable myAssets={myAssets} />
+        )}
 
+        {/* INCIDENTS */}
+        {activePage === "My Incidents" && (
+          <IncidentList role="employee" employeeId={user?.empCode} />
+        )}
+
+        {/* RAISE INCIDENT */}
         {activePage === "Raise Incident" && (
           <EmployeeIncidentForm employeeId={user?.empCode} />
         )}
-        {activePage === "My Incidents" && <IncidentList role="employee" employeeId={user?.empCode} />}
 
       </div>
     </div>
