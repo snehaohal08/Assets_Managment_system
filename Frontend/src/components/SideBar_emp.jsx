@@ -6,7 +6,6 @@ import {
   FaLaptop,
   FaTools,
   FaPlusCircle,
-  FaClipboardList,
   FaBell,
   FaSignOutAlt
 } from "react-icons/fa";
@@ -33,7 +32,6 @@ export default function SideBar_emp({
     { name: "My Assets", icon: <FaLaptop /> },
     { name: "My Incidents", icon: <FaTools /> },
     { name: "Raise Incident", icon: <FaPlusCircle /> },
-    { name: "Requests", icon: <FaClipboardList /> },
     { name: "Notifications", icon: <FaBell /> },
     { name: "Logout", icon: <FaSignOutAlt /> },
   ];
